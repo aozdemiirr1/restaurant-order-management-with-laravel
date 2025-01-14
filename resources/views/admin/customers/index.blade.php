@@ -6,12 +6,34 @@
 <div x-data="{
     showAddModal: false,
     showEditModal: false,
-    showFilters: false,
     showDeleteModal: false,
     customerData: null,
     deleteModalTitle: '',
     deleteModalMessage: '',
     deleteModalAction: '',
+    searchTerm: '',
+    customers: {{ Js::from($customers->items()) }},
+    filteredCustomers: [],
+
+    init() {
+        this.filteredCustomers = this.customers;
+        this.$watch('searchTerm', (value) => {
+            if (value.length >= 2) {
+                this.searchCustomers(value.toLowerCase());
+            } else {
+                this.filteredCustomers = this.customers;
+            }
+        });
+    },
+
+    searchCustomers(term) {
+        this.filteredCustomers = this.customers.filter(customer =>
+            customer.name.toLowerCase().includes(term) ||
+            customer.phone?.toLowerCase().includes(term) ||
+            customer.email?.toLowerCase().includes(term) ||
+            customer.address?.toLowerCase().includes(term)
+        );
+    },
 
     async editCustomer(id) {
         try {
@@ -33,49 +55,20 @@
     <div class="flex justify-between items-center p-4 border-b">
         <div class="flex items-center gap-4">
             <h2 class="text-lg font-semibold text-gray-800">Müşteri Listesi</h2>
-            <div class="flex items-center gap-2">
-                <button @click="showFilters = !showFilters" class="text-white bg-blue-400 px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-1.5">
-                    <i class="fas fa-search"></i>
-                    <span>Ara</span>
-                    <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-                </button>
-                @if(request()->has('search'))
-                    <a href="{{ route('admin.customers.index') }}"
-                    class="text-white bg-red-400 px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-1.5">
-                        <i class="fas fa-times text-xs"></i>
-                        <span>Sıfırla</span>
-                    </a>
-                @endif
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fas fa-search text-gray-400"></i>
+                </div>
+                <input type="text"
+                       x-model="searchTerm"
+                       class="block w-72 pl-10 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:border-red-500 focus:ring-red-500 shadow-sm"
+                       placeholder="Müşteri ara... (min. 2 karakter)">
             </div>
         </div>
         <button @click="showAddModal = true" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-1.5 font-medium">
             <i class="fas fa-plus text-xs"></i>
             <span>Yeni Müşteri</span>
         </button>
-    </div>
-
-    <!-- Arama Alanı -->
-    <div x-show="showFilters" x-transition
-         class="border-b bg-gray-50/50 p-4">
-        <form action="{{ route('admin.customers.index') }}" method="GET" class="max-w-2xl mx-auto">
-            <div class="flex gap-4">
-                <div class="flex-1">
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-search text-gray-400 text-sm"></i>
-                        </div>
-                        <input type="text" name="search" value="{{ request('search') }}"
-                            class="block w-full pl-10 pr-3 py-2 border-gray-200 rounded-lg text-sm focus:border-red-500 focus:ring-red-500 shadow-sm"
-                            placeholder="Müşteri adı, telefon, email veya adres...">
-                    </div>
-                </div>
-                <button type="submit"
-                    class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
-                    <i class="fas fa-search mr-2 text-xs"></i>
-                    Ara
-                </button>
-            </div>
-        </form>
     </div>
 
     <!-- Tablo -->
@@ -90,33 +83,31 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
-                @forelse($customers as $customer)
-                <tr class="hover:bg-gray-50/40 transition-colors">
-                    <td class="px-4 py-3">
-                        <div class="text-sm font-medium text-gray-900">{{ $customer->name }}</div>
-                    </td>
-                    <td class="px-4 py-3">
-                        <div class="text-sm text-gray-900">{{ $customer->phone }}</div>
-                        @if($customer->email)
-                            <div class="text-xs text-gray-500">{{ $customer->email }}</div>
-                        @endif
-                    </td>
-                    <td class="px-4 py-3">
-                        <div class="text-sm text-gray-900">{{ $customer->address }}</div>
-                    </td>
-                    <td class="px-4 py-3 text-right space-x-1">
-                        <button @click="editCustomer({{ $customer->id }})"
-                                class="text-blue-400 hover:text-blue-800 bg-blue-100 hover:bg-blue-200 rounded px-2 py-1 transition-colors">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button @click="confirmDelete({{ $customer->id }}, '{{ $customer->name }}')"
-                                class="text-red-400 hover:text-red-800 bg-red-100 hover:bg-red-200 rounded px-2 py-1 transition-colors">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-                @empty
-                <tr>
+                <template x-for="customer in filteredCustomers" :key="customer.id">
+                    <tr class="hover:bg-gray-50/40 transition-colors">
+                        <td class="px-4 py-3">
+                            <div class="text-sm font-medium text-gray-900" x-text="customer.name"></div>
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="text-sm text-gray-900" x-text="customer.phone"></div>
+                            <div x-show="customer.email" class="text-xs text-gray-500" x-text="customer.email"></div>
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="text-sm text-gray-900" x-text="customer.address"></div>
+                        </td>
+                        <td class="px-4 py-3 text-right space-x-1">
+                            <button @click="editCustomer(customer.id)"
+                                    class="text-blue-400 hover:text-blue-800 bg-blue-100 hover:bg-blue-200 rounded px-2 py-1 transition-colors">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button @click="confirmDelete(customer.id, customer.name)"
+                                    class="text-red-400 hover:text-red-800 bg-red-100 hover:bg-red-200 rounded px-2 py-1 transition-colors">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </template>
+                <tr x-show="filteredCustomers.length === 0">
                     <td colspan="4" class="px-4 py-8 text-center text-gray-500">
                         <div class="flex flex-col items-center justify-center space-y-2">
                             <i class="fas fa-search text-2xl"></i>
@@ -124,7 +115,6 @@
                         </div>
                     </td>
                 </tr>
-                @endforelse
             </tbody>
         </table>
     </div>

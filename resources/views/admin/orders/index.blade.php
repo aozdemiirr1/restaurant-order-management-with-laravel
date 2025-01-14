@@ -205,10 +205,18 @@
             <thead>
                 <tr class="bg-gray-50/50">
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">
-                        <input type="checkbox"
-                               x-model="selectAll"
-                               @click="toggleSelectAll"
-                               class="rounded border-gray-300 text-red-600 focus:ring-red-500">
+                        <label class="inline-flex items-center">
+                            <div class="relative flex items-center">
+                                <input type="checkbox"
+                                       x-model="selectAll"
+                                       @click="toggleSelectAll"
+                                       class="peer h-4 w-4 cursor-pointer appearance-none rounded-sm border border-gray-300 checked:border-red-500 checked:bg-red-500 hover:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-200">
+                                <svg class="pointer-events-none absolute h-4 w-4 text-white opacity-0 peer-checked:opacity-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                            </div>
+                            <span class="ml-2 text-xs font-medium text-gray-500">Tümünü Seç</span>
+                        </label>
                     </th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Sipariş No</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Müşteri</th>
@@ -222,11 +230,19 @@
                 @forelse($orders as $order)
                 <tr class="hover:bg-gray-50/40 transition-colors">
                     <td class="px-4 py-3">
-                        <input type="checkbox"
-                               value="{{ $order->id }}"
-                               x-model="selectedOrders"
-                               name="order_ids[]"
-                               class="rounded border-gray-300 text-red-600 focus:ring-red-500">
+                        <label class="inline-flex items-center">
+                            <div class="relative flex items-center">
+                                <input type="checkbox"
+                                       value="{{ $order->id }}"
+                                       x-model="selectedOrders"
+                                       name="order_ids[]"
+                                       class="peer h-4 w-4 cursor-pointer appearance-none rounded-sm border border-gray-300 checked:border-red-500 checked:bg-red-500 hover:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-200">
+                                <svg class="pointer-events-none absolute h-4 w-4 text-white opacity-0 peer-checked:opacity-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                            </div>
+                            <span class="ml-2 text-xs font-medium text-gray-400">#{{ $order->id }}</span>
+                        </label>
                     </td>
                     <td class="px-4 py-3">
                         <div class="text-sm font-medium text-gray-900">#{{ $order->id }}</div>

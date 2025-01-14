@@ -9,20 +9,7 @@ class CustomerController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Customer::query();
-
-        // Arama filtresi (Ad, telefon veya email)
-        if ($request->filled('search')) {
-            $searchTerm = $request->search;
-            $query->where(function($q) use ($searchTerm) {
-                $q->where('name', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('phone', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('email', 'like', '%' . $searchTerm . '%')
-                  ->orWhere('address', 'like', '%' . $searchTerm . '%');
-            });
-        }
-
-        $customers = $query->latest()->paginate(10)->withQueryString();
+        $customers = Customer::latest()->paginate(10);
         return view('admin.customers.index', compact('customers'));
     }
 

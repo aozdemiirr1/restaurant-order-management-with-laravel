@@ -463,10 +463,10 @@
                                                         <div class="text-sm text-gray-800" x-text="item.quantity"></div>
                                                     </td>
                                                     <td class="px-4 py-2.5 text-right">
-                                                        <div class="text-sm text-gray-800" x-text="'₺' + item.unit_price.toFixed(2)"></div>
+                                                        <div class="text-sm text-gray-800" x-text="`₺${parseFloat(item.unit_price).toFixed(2)}`"></div>
                                                     </td>
                                                     <td class="px-4 py-2.5 text-right">
-                                                        <div class="text-sm text-gray-800" x-text="'₺' + item.subtotal.toFixed(2)"></div>
+                                                        <div class="text-sm text-gray-800" x-text="`₺${parseFloat(item.subtotal).toFixed(2)}`"></div>
                                                     </td>
                                                 </tr>
                                             </template>
@@ -474,7 +474,7 @@
                                         <tfoot>
                                             <tr class="bg-gray-50">
                                                 <td colspan="3" class="px-4 py-2.5 text-sm font-medium text-gray-700 text-right">Toplam:</td>
-                                                <td class="px-4 py-2.5 text-sm font-medium text-gray-700 text-right" x-text="'₺' + orderData.total_amount.toFixed(2)"></td>
+                                                <td class="px-4 py-2.5 text-sm font-medium text-gray-700 text-right" x-text="`₺${parseFloat(orderData.total_amount).toFixed(2)}`"></td>
                                             </tr>
                                         </tfoot>
                                     </table>

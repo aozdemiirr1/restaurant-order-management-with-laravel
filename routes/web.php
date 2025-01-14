@@ -27,6 +27,7 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::delete('/orders/bulk-delete', [OrderController::class, 'bulkDelete'])->name('orders.bulk-delete');
     Route::put('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
     Route::get('/orders/archive', [OrderArchiveController::class, 'index'])->name('orders.archive');
+    Route::get('/orders/archive/{id}', [OrderArchiveController::class, 'show'])->name('orders.archive.show');
     Route::resource('orders', OrderController::class);
 
     // Customer routes

@@ -103,10 +103,8 @@ class OrderController extends Controller
             $order = new Order();
             $order->customer_id = $validated['customer_id'];
             $order->notes = $validated['notes'];
-            $order->total_amount = 0;
+            $order->status = 'preparing';
             $order->save();
-
-            $total = 0;
 
             // Sipariş detaylarını ekle
             foreach ($validated['menu_ids'] as $index => $menuId) {
@@ -116,15 +114,15 @@ class OrderController extends Controller
                 $orderItem = new OrderItem([
                     'menu_id' => $menu->id,
                     'quantity' => $quantity,
-                    'unit_price' => $menu->price
+                    'unit_price' => $menu->price,
+                    'subtotal' => $quantity * $menu->price
                 ]);
 
                 $order->items()->save($orderItem);
-                $total += $orderItem->subtotal;
             }
 
-            // Toplam tutarı güncelle
-            $order->total_amount = $total;
+            // Toplam tutarı hesapla ve güncelle
+            $order->calculateTotalAmount();
             $order->save();
 
             DB::commit();
@@ -145,7 +143,7 @@ class OrderController extends Controller
         $orderData = [
             'id' => $order->id,
             'status' => $order->status,
-            'total_amount' => $order->total_amount,
+            'total_amount' => (float) $order->total_amount,
             'notes' => $order->notes,
             'created_at' => $order->created_at->format('d.m.Y H:i'),
             'customer' => [
@@ -158,9 +156,9 @@ class OrderController extends Controller
                 return [
                     'menu_id' => $item->menu_id,
                     'menu_name' => $item->menu->name,
-                    'quantity' => $item->quantity,
-                    'unit_price' => $item->unit_price,
-                    'subtotal' => $item->quantity * $item->unit_price,
+                    'quantity' => (int) $item->quantity,
+                    'unit_price' => (float) $item->unit_price,
+                    'subtotal' => (float) ($item->quantity * $item->unit_price),
                 ];
             }),
         ];

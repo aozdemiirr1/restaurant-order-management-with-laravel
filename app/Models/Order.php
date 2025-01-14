@@ -67,7 +67,11 @@ class Order extends Model
     // Toplam tutarı hesaplama metodu
     public function calculateTotalAmount()
     {
-        $this->total_amount = $this->items()->sum('subtotal');
+        $total = 0;
+        foreach ($this->items as $item) {
+            $total += $item->quantity * $item->unit_price;
+        }
+        $this->total_amount = $total;
         return $this->total_amount;
     }
 

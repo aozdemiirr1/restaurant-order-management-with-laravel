@@ -98,6 +98,19 @@ class DashboardController extends Controller
             'formatted_daily_revenue' => number_format($daily_revenue, 2)
         ];
 
+        // Get sales data for the last 7 days
+        $sales_data = Order::whereDate('created_at', '>=', now()->subDays(7))
+            ->selectRaw('DATE(created_at) as date, SUM(total_amount) as total')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get()
+            ->map(function($sale) {
+                return [
+                    'date' => date('d M', strtotime($sale->date)),
+                    'total' => round($sale->total, 2)
+                ];
+            });
+
         return view('admin.dashboard', compact(
             'daily_revenue',
             'revenue_change',
@@ -106,7 +119,8 @@ class DashboardController extends Controller
             'monthly_orders_count',
             'average_daily_orders',
             'orders_change',
-            'debug'
+            'debug',
+            'sales_data'
         ));
     }
 }

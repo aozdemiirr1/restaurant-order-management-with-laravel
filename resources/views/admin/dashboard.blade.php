@@ -85,9 +85,57 @@
 <div class="bg-white rounded-lg shadow-sm p-5 border border-gray-100">
     <h3 class="text-sm font-medium text-gray-800 mb-4">Satış Grafiği</h3>
     <div class="h-72">
-        <div class="w-full h-full bg-gray-50 rounded-lg flex items-center justify-center text-gray-400">
-            <p class="text-sm">Grafik yakında eklenecek</p>
-        </div>
+        <canvas id="salesChart"></canvas>
     </div>
 </div>
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('salesChart').getContext('2d');
+
+    const salesData = @json($sales_data);
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: salesData.map(data => data.date),
+            datasets: [{
+                label: 'Günlük Satışlar',
+                data: salesData.map(data => data.total),
+                borderColor: '#f39c12',
+                backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+@endpush
+
 @endsection

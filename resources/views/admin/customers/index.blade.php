@@ -85,14 +85,14 @@
                     </td>
                     <td class="px-4 py-3 text-right space-x-1">
                         <button @click="editCustomer({{ $customer->id }})"
-                                class="text-blue-600 hover:text-blue-800 bg-blue-100 hover:bg-blue-200 rounded-lg p-2 transition-colors">
+                                class="text-blue-400 hover:text-blue-800 bg-blue-100 hover:bg-blue-200 rounded px-2 py-1 transition-colors">
                             <i class="fas fa-edit"></i>
                         </button>
                         <form action="{{ route('admin.customers.destroy', $customer) }}" method="POST" class="inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit"
-                                    class="text-red-600 hover:text-red-800 bg-red-100 hover:bg-red-200 rounded-lg p-2 transition-colors"
+                                    class="text-red-400 hover:text-red-800 bg-red-100 hover:bg-red-200 rounded px-2 py-1 transition-colors"
                                     onclick="return confirm('Bu müşteriyi silmek istediğinize emin misiniz?')">
                                 <i class="fas fa-trash"></i>
                             </button>

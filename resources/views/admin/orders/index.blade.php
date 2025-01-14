@@ -19,7 +19,7 @@
 }" class="bg-white">
     <div class="flex justify-between items-center p-4 border-b">
         <h2 class="text-base font-medium text-gray-700">Sipariş Listesi</h2>
-        <button @click="showAddModal = true" class="bg-[#f39c12] text-white px-3 py-1.5 rounded text-sm hover:bg-[#e67e22] transition-colors flex items-center gap-1.5">
+        <button @click="showAddModal = true" class="bg-red-700 text-white px-3 py-1.5 rounded text-sm transition-colors flex items-center gap-1.5">
             <i class="fas fa-plus text-xs"></i>
             <span>Yeni Sipariş</span>
         </button>
@@ -155,7 +155,7 @@
                                 <div class="flex justify-between items-center mb-4">
                                     <label class="block text-sm font-medium text-gray-600">Sipariş Öğeleri</label>
                                     <button type="button" onclick="addOrderItem()"
-                                        class="text-sm bg-gray-100 text-gray-600 px-3 py-1.5 rounded hover:bg-gray-200 transition-colors">
+                                        class="text-sm bg-red-700 text-white px-3 py-1.5 rounded transition-colors">
                                         Ürün Ekle
                                     </button>
                                 </div>

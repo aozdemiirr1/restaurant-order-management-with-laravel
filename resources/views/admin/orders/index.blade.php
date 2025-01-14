@@ -280,9 +280,9 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="px-4 py-8 text-center text-gray-500">
-                        <div class="flex flex-col items-center justify-center space-y-2">
-                            <i class="fas fa-search text-2xl"></i>
+                    <td colspan="7" class="px-4 text-center text-gray-500">
+                        <div class="flex flex-col items-center justify-center min-h-[200px] space-y-3">
+                            <i class="fas fa-search text-3xl text-gray-400"></i>
                             <p class="text-sm">Sipariş bulunamadı.</p>
                         </div>
                     </td>

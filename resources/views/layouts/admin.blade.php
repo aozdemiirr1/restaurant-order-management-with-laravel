@@ -53,9 +53,13 @@
                     <i class="fas fa-users mr-3 text-sm"></i>
                     <span>Müşteriler</span>
                 </a>
-                <a href="{{ route('admin.orders.index') }}" class="flex items-center px-4 py-3 mb-2 {{ request()->routeIs('admin.orders.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
+                <a href="{{ route('admin.orders.index') }}" class="flex items-center px-4 py-3 mb-2 {{ request()->routeIs('admin.orders.*') && !request()->routeIs('admin.orders.archive') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
                     <i class="fas fa-shopping-bag mr-3 text-sm"></i>
                     <span>Siparişler</span>
+                </a>
+                <a href="{{ route('admin.orders.archive') }}" class="flex items-center px-4 py-3 mb-2 {{ request()->routeIs('admin.orders.archive') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
+                    <i class="fas fa-archive mr-3 text-sm"></i>
+                    <span>Sipariş Arşivi</span>
                 </a>
             </nav>
         </div>

@@ -6,6 +6,7 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\OrderArchiveController;
 
 // Ana sayfa route'u login sayfasına yönlendirir
 Route::redirect('/', '/admin/login');
@@ -17,7 +18,7 @@ Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.lo
 
 // Admin Protected Routes
 Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Menu routes
     Route::resource('menus', MenuController::class);
@@ -25,6 +26,7 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     // Order routes
     Route::delete('/orders/bulk-delete', [OrderController::class, 'bulkDelete'])->name('orders.bulk-delete');
     Route::put('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
+    Route::get('/orders/archive', [OrderArchiveController::class, 'index'])->name('orders.archive');
     Route::resource('orders', OrderController::class);
 
     // Customer routes

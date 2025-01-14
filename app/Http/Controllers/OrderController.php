@@ -188,4 +188,24 @@ class OrderController extends Controller
         return redirect()->route('admin.orders.index')
             ->with('success', 'Sipariş başarıyla silindi.');
     }
+
+    public function bulkDelete(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'required|exists:orders,id'
+        ]);
+
+        try {
+            DB::beginTransaction();
+            Order::whereIn('id', $validated['ids'])->delete();
+            DB::commit();
+
+            return redirect()->route('admin.orders.index')
+                ->with('success', count($validated['ids']) . ' adet sipariş başarıyla silindi.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Siparişler silinirken bir hata oluştu.');
+        }
+    }
 }

@@ -25,6 +25,7 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     // Order routes
     Route::resource('orders', OrderController::class);
     Route::put('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
+    Route::delete('/orders/bulk-delete', [OrderController::class, 'bulkDelete'])->name('orders.bulk-delete');
 
     // Customer routes
     Route::resource('customers', CustomerController::class);

@@ -10,25 +10,23 @@ class Menu extends Model
         'name',
         'description',
         'price',
-        'is_available',
-        'category',
-        'size',
-        'stock'
+        'category_id',
+        'image',
+        'is_available'
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
-        'is_available' => 'boolean',
-        'stock' => 'integer'
+        'is_available' => 'boolean'
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 
     public function getCategoryNameAttribute()
     {
-        return match($this->category) {
-            'döner' => 'Döner',
-            'içecek' => 'İçecek',
-            'tatlı' => 'Tatlı',
-            default => $this->category
-        };
+        return $this->category ? $this->category->name : '';
     }
 }

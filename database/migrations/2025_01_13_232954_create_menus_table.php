@@ -16,10 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $table->decimal('price', 8, 2);
+            $table->string('image')->nullable();
             $table->boolean('is_available')->default(true);
-            $table->string('category')->default('döner'); // döner, içecek, tatlı vb.
-            $table->string('size')->nullable(); // yarım, tam vb.
-            $table->integer('stock')->default(0);
             $table->timestamps();
         });
     }

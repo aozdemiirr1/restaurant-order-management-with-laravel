@@ -16,7 +16,11 @@ class OrderController extends Controller
         $orders = Order::with(['customer', 'items.menu'])
             ->latest()
             ->paginate(10);
-        return view('admin.orders.index', compact('orders'));
+
+        $customers = Customer::all();
+        $menus = Menu::where('is_available', true)->get();
+
+        return view('admin.orders.index', compact('orders', 'customers', 'menus'));
     }
 
     public function create()
@@ -82,7 +86,31 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         $order->load(['customer', 'items.menu']);
-        return view('admin.orders.show', compact('order'));
+
+        $orderData = [
+            'id' => $order->id,
+            'status' => $order->status,
+            'total_amount' => $order->total_amount,
+            'notes' => $order->notes,
+            'created_at' => $order->created_at->format('d.m.Y H:i'),
+            'customer' => [
+                'name' => $order->customer->name,
+                'phone' => $order->customer->phone,
+                'email' => $order->customer->email,
+                'address' => $order->customer->address,
+            ],
+            'items' => $order->items->map(function ($item) {
+                return [
+                    'menu_id' => $item->menu_id,
+                    'menu_name' => $item->menu->name,
+                    'quantity' => $item->quantity,
+                    'unit_price' => $item->unit_price,
+                    'subtotal' => $item->quantity * $item->unit_price,
+                ];
+            }),
+        ];
+
+        return response()->json($orderData);
     }
 
     public function updateStatus(Request $request, Order $order)

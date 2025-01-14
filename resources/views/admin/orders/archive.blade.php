@@ -3,10 +3,57 @@
 @section('title', 'Sipariş Arşivi')
 
 @section('content')
-<div x-data="orderArchive" class="bg-white rounded-lg shadow-sm">
+<div x-data="{
+    showViewModal: false,
+    showFilters: false,
+    showDeleteModal: false,
+    orderData: null,
+    deleteModalTitle: '',
+    deleteModalMessage: '',
+    deleteModalAction: '',
+    selectedOrders: [],
+    selectAll: false,
+
+    toggleSelectAll() {
+        this.selectAll = !this.selectAll;
+        this.selectedOrders = this.selectAll ? [...document.querySelectorAll('input[name=\'order_ids[]\']')].map(cb => cb.value) : [];
+    },
+
+    confirmBulkDelete() {
+        if (this.selectedOrders.length === 0) return;
+        this.deleteModalTitle = 'Siparişleri Sil';
+        this.deleteModalMessage = `${this.selectedOrders.length} adet siparişi kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`;
+        this.deleteModalAction = '{{ route('admin.orders.archive.bulk-delete') }}';
+        this.showDeleteModal = true;
+    },
+
+    async viewOrder(id) {
+        try {
+            const response = await fetch(`/admin/orders/archive/${id}`);
+            this.orderData = await response.json();
+            this.showViewModal = true;
+        } catch (error) {
+            console.error('Sipariş bilgileri alınamadı:', error);
+        }
+    },
+
+    confirmDelete(id) {
+        this.deleteModalTitle = 'Siparişi Sil';
+        this.deleteModalMessage = `#${id} numaralı siparişi kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`;
+        this.deleteModalAction = `/admin/orders/archive/${id}`;
+        this.showDeleteModal = true;
+    }
+}" class="bg-white rounded-lg shadow-sm">
     <div class="flex justify-between items-center p-4 border-b">
         <div class="flex items-center gap-4">
             <h2 class="text-lg font-semibold text-gray-800">Sipariş Arşivi</h2>
+            <button
+                @click="confirmBulkDelete"
+                x-show="selectedOrders.length > 0"
+                class="text-red-600 hover:text-red-800 bg-red-100 hover:bg-red-200 px-4 py-2 rounded text-sm transition-colors flex items-center gap-1.5">
+                <i class="fas fa-trash"></i>
+                <span x-text="'Seçili Olanları Sil (' + selectedOrders.length + ')'"></span>
+            </button>
         </div>
         <div class="flex items-center gap-4">
             <div class="flex items-center gap-2">
@@ -16,7 +63,7 @@
                     <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
                 </button>
                 @if(request()->hasAny(['status', 'customer', 'date_from', 'date_to']))
-                    <a href="{{ route('admin.orders.archive') }}"
+                    <a href="{{ route('admin.orders.archive.index') }}"
                     class="text-white bg-red-400 px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-1.5">
                         <i class="fas fa-times text-xs"></i>
                         <span>Sıfırla</span>
@@ -29,7 +76,7 @@
     <!-- Filtreleme Alanı -->
     <div x-show="showFilters" x-transition
          class="border-b bg-gray-50/50 p-4">
-        <form action="{{ route('admin.orders.archive') }}" method="GET" class="space-y-4">
+        <form action="{{ route('admin.orders.archive.index') }}" method="GET" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Müşteri Seçimi -->
                 <div>
@@ -94,6 +141,20 @@
         <table class="w-full">
             <thead>
                 <tr class="bg-gray-50/50">
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">
+                        <label class="inline-flex items-center">
+                            <div class="relative flex items-center">
+                                <input type="checkbox"
+                                       x-model="selectAll"
+                                       @click="toggleSelectAll"
+                                       class="peer h-4 w-4 cursor-pointer appearance-none rounded-sm border border-gray-300 checked:border-red-500 checked:bg-red-500 hover:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-200">
+                                <svg class="pointer-events-none absolute h-4 w-4 text-white opacity-0 peer-checked:opacity-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                            </div>
+                            <span class="ml-2 text-xs font-medium text-gray-500">Tümünü Seç</span>
+                        </label>
+                    </th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Sipariş No</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Müşteri</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Tutar</th>
@@ -105,6 +166,21 @@
             <tbody class="divide-y divide-gray-100">
                 @forelse($archivedOrders as $order)
                 <tr class="hover:bg-gray-50/40 transition-colors">
+                    <td class="px-4 py-3">
+                        <label class="inline-flex items-center">
+                            <div class="relative flex items-center">
+                                <input type="checkbox"
+                                       value="{{ $order->id }}"
+                                       x-model="selectedOrders"
+                                       name="order_ids[]"
+                                       class="peer h-4 w-4 cursor-pointer appearance-none rounded-sm border border-gray-300 checked:border-red-500 checked:bg-red-500 hover:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-200">
+                                <svg class="pointer-events-none absolute h-4 w-4 text-white opacity-0 peer-checked:opacity-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                </svg>
+                            </div>
+                            <span class="ml-2 text-xs font-medium text-gray-400">#{{ $order->id }}</span>
+                        </label>
+                    </td>
                     <td class="px-4 py-3">
                         <div class="text-sm font-medium text-gray-900">#{{ $order->id }}</div>
                     </td>
@@ -125,16 +201,20 @@
                     <td class="px-4 py-3">
                         <div class="text-sm text-gray-900">{{ $order->deleted_at->format('d.m.Y H:i') }}</div>
                     </td>
-                    <td class="px-4 py-3 text-right">
+                    <td class="px-4 py-3 text-right space-x-1">
                         <button @click="viewOrder({{ $order->id }})"
                                 class="text-blue-400 hover:text-blue-800 bg-blue-100 hover:bg-blue-200 rounded px-2 py-1 transition-colors">
                             <i class="fas fa-eye"></i>
+                        </button>
+                        <button @click="confirmDelete({{ $order->id }})"
+                                class="text-red-400 hover:text-red-800 bg-red-100 hover:bg-red-200 rounded px-2 py-1 transition-colors">
+                            <i class="fas fa-trash"></i>
                         </button>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+                    <td colspan="7" class="px-4 py-8 text-center text-gray-500">
                         <div class="flex flex-col items-center justify-center space-y-2">
                             <i class="fas fa-archive text-2xl"></i>
                             <p class="text-sm">Arşivlenmiş sipariş bulunamadı.</p>
@@ -150,8 +230,8 @@
         {{ $archivedOrders->links() }}
     </div>
 
-    <!-- Sipariş Detay Modal -->
-    <div x-show="showViewModal" x-cloak
+    <!-- Delete Confirmation Modal -->
+    <div x-show="showDeleteModal" x-cloak
          class="fixed inset-0 z-50 overflow-y-auto"
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0"
@@ -159,105 +239,38 @@
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0">
-        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
-                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-            </div>
-            <div class="inline-block align-bottom bg-white rounded-sm text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
-                <div class="bg-white">
-                    <div class="flex justify-between items-center p-4 border-b">
-                        <div>
-                            <h3 class="text-base font-medium text-gray-700" x-text="'Sipariş #' + orderData?.id"></h3>
-                            <p class="text-sm text-gray-500 mt-0.5" x-text="orderData?.created_at"></p>
+        <div class="flex items-center justify-center min-h-screen p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+
+            <div class="relative bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg w-full mx-4">
+                <form :action="deleteModalAction" method="POST" class="bg-white">
+                    @csrf
+                    @method('DELETE')
+                    <template x-if="selectedOrders.length > 0">
+                        <template x-for="id in selectedOrders" :key="id">
+                            <input type="hidden" name="ids[]" :value="id">
+                        </template>
+                    </template>
+                    <div class="p-6">
+                        <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full">
+                            <i class="fas fa-exclamation-triangle text-red-600"></i>
                         </div>
-                        <button @click="showViewModal = false" class="text-gray-400 hover:text-gray-600">
-                            <i class="fas fa-times"></i>
+                        <div class="mt-3 text-center">
+                            <h3 class="text-lg font-medium text-gray-900 mb-2" x-text="deleteModalTitle"></h3>
+                            <p class="text-sm text-gray-500" x-text="deleteModalMessage"></p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-6 py-4 flex justify-end space-x-3">
+                        <button type="button" @click="showDeleteModal = false"
+                            class="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm">
+                            İptal
+                        </button>
+                        <button type="submit"
+                            class="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm">
+                            Sil
                         </button>
                     </div>
-                    <div class="p-4">
-                        <template x-if="orderData">
-                            <div class="space-y-6">
-                                <!-- Sipariş Durumu -->
-                                <div class="flex justify-between items-center">
-                                    <span class="px-3 py-1 text-xs font-medium rounded-full"
-                                        :class="{
-                                            'bg-green-50 text-green-700': orderData.status === 'delivered',
-                                            'bg-red-50 text-red-700': orderData.status === 'cancelled'
-                                        }"
-                                        x-text="orderData.status === 'delivered' ? 'Teslim Edildi' : 'İptal Edildi'">
-                                    </span>
-                                </div>
-
-                                <!-- Müşteri Bilgileri -->
-                                <div class="bg-gray-50 rounded-lg p-4">
-                                    <h4 class="text-sm font-medium text-gray-700 mb-3">Müşteri Bilgileri</h4>
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <p class="text-xs text-gray-500">Ad Soyad</p>
-                                            <p class="text-sm text-gray-800" x-text="orderData.customer.name"></p>
-                                        </div>
-                                        <div>
-                                            <p class="text-xs text-gray-500">Telefon</p>
-                                            <p class="text-sm text-gray-800" x-text="orderData.customer.phone"></p>
-                                        </div>
-                                        <div x-show="orderData.customer.email">
-                                            <p class="text-xs text-gray-500">E-posta</p>
-                                            <p class="text-sm text-gray-800" x-text="orderData.customer.email"></p>
-                                        </div>
-                                        <div x-show="orderData.customer.address">
-                                            <p class="text-xs text-gray-500">Adres</p>
-                                            <p class="text-sm text-gray-800" x-text="orderData.customer.address"></p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Sipariş Öğeleri -->
-                                <div class="border rounded-lg overflow-hidden">
-                                    <table class="w-full">
-                                        <thead>
-                                            <tr class="bg-gray-50 border-b">
-                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-600">Ürün</th>
-                                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-600">Adet</th>
-                                                <th class="px-4 py-2 text-right text-xs font-medium text-gray-600">Birim Fiyat</th>
-                                                <th class="px-4 py-2 text-right text-xs font-medium text-gray-600">Toplam</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="divide-y divide-gray-100">
-                                            <template x-for="item in orderData.items" :key="item.menu_id">
-                                                <tr>
-                                                    <td class="px-4 py-2.5">
-                                                        <div class="text-sm text-gray-800" x-text="item.menu_name"></div>
-                                                    </td>
-                                                    <td class="px-4 py-2.5 text-center">
-                                                        <div class="text-sm text-gray-800" x-text="item.quantity"></div>
-                                                    </td>
-                                                    <td class="px-4 py-2.5 text-right">
-                                                        <div class="text-sm text-gray-800" x-text="'₺' + item.unit_price.toFixed(2)"></div>
-                                                    </td>
-                                                    <td class="px-4 py-2.5 text-right">
-                                                        <div class="text-sm text-gray-800" x-text="'₺' + item.subtotal.toFixed(2)"></div>
-                                                    </td>
-                                                </tr>
-                                            </template>
-                                        </tbody>
-                                        <tfoot>
-                                            <tr class="bg-gray-50">
-                                                <td colspan="3" class="px-4 py-2.5 text-sm font-medium text-gray-700 text-right">Toplam:</td>
-                                                <td class="px-4 py-2.5 text-sm font-medium text-gray-700 text-right" x-text="'₺' + orderData.total_amount.toFixed(2)"></td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
-
-                                <!-- Sipariş Notu -->
-                                <div x-show="orderData.notes" class="bg-gray-50 rounded-lg p-4">
-                                    <h4 class="text-sm font-medium text-gray-700 mb-2">Sipariş Notu</h4>
-                                    <p class="text-sm text-gray-600" x-text="orderData.notes"></p>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
@@ -269,18 +282,42 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('orderArchive', () => ({
         showFilters: false,
         showViewModal: false,
+        showDeleteModal: false,
         orderData: null,
+        deleteModalTitle: '',
+        deleteModalMessage: '',
+        deleteModalAction: '',
+        selectedOrders: [],
+        selectAll: false,
+
+        toggleSelectAll() {
+            this.selectAll = !this.selectAll;
+            this.selectedOrders = this.selectAll ? [...document.querySelectorAll('input[name=\'order_ids[]\']')].map(cb => cb.value) : [];
+        },
+
+        confirmBulkDelete() {
+            if (this.selectedOrders.length === 0) return;
+            this.deleteModalTitle = 'Siparişleri Sil';
+            this.deleteModalMessage = `${this.selectedOrders.length} adet siparişi kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`;
+            this.deleteModalAction = '{{ route('admin.orders.archive.bulk-delete') }}';
+            this.showDeleteModal = true;
+        },
 
         async viewOrder(id) {
             try {
                 const response = await fetch(`/admin/orders/archive/${id}`);
-                if (!response.ok) throw new Error('Sipariş bilgileri alınamadı');
                 this.orderData = await response.json();
                 this.showViewModal = true;
             } catch (error) {
                 console.error('Sipariş bilgileri alınamadı:', error);
-                alert('Sipariş bilgileri alınamadı: ' + error.message);
             }
+        },
+
+        confirmDelete(id) {
+            this.deleteModalTitle = 'Siparişi Sil';
+            this.deleteModalMessage = `#${id} numaralı siparişi kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`;
+            this.deleteModalAction = `/admin/orders/archive/${id}`;
+            this.showDeleteModal = true;
         }
     }));
 });

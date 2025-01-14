@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OrderArchiveController extends Controller
 {
@@ -62,5 +63,34 @@ class OrderArchiveController extends Controller
             'created_at' => $order->created_at->format('d.m.Y H:i'),
             'deleted_at' => $order->deleted_at->format('d.m.Y H:i'),
         ]);
+    }
+
+    public function destroy($id)
+    {
+        $order = Order::onlyTrashed()->findOrFail($id);
+        $order->forceDelete();
+
+        return redirect()->route('admin.orders.archive.index')
+            ->with('success', 'Sipariş başarıyla silindi.');
+    }
+
+    public function bulkDelete(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'required|exists:orders,id'
+        ]);
+
+        try {
+            DB::beginTransaction();
+            Order::onlyTrashed()->whereIn('id', $validated['ids'])->forceDelete();
+            DB::commit();
+
+            return redirect()->route('admin.orders.archive.index')
+                ->with('success', count($validated['ids']) . ' adet sipariş başarıyla silindi.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Siparişler silinirken bir hata oluştu.');
+        }
     }
 }

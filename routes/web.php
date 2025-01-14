@@ -23,13 +23,23 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     // Menu routes
     Route::resource('menus', MenuController::class);
 
-    // Order routes
-    Route::delete('/orders/bulk-delete', [OrderController::class, 'bulkDelete'])->name('orders.bulk-delete');
-    Route::put('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
-    Route::get('/orders/archive', [OrderArchiveController::class, 'index'])->name('orders.archive');
-    Route::get('/orders/archive/{id}', [OrderArchiveController::class, 'show'])->name('orders.archive.show');
-    Route::resource('orders', OrderController::class);
-
     // Customer routes
     Route::resource('customers', CustomerController::class);
+
+    // Order routes
+    Route::prefix('orders')->group(function () {
+        // Archive routes - must be defined BEFORE the resource routes
+        Route::prefix('archive')->name('orders.archive.')->group(function () {
+            Route::get('/', [OrderArchiveController::class, 'index'])->name('index');
+            Route::get('/{id}', [OrderArchiveController::class, 'show'])->name('show');
+            Route::delete('/{id}', [OrderArchiveController::class, 'destroy'])->name('destroy');
+            Route::delete('/', [OrderArchiveController::class, 'bulkDelete'])->name('bulk-delete');
+        });
+
+        // Regular order routes
+        Route::delete('/bulk-delete', [OrderController::class, 'bulkDelete'])->name('orders.bulk-delete');
+        Route::put('/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
+    });
+
+    Route::resource('orders', OrderController::class);
 });

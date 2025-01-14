@@ -52,12 +52,18 @@ class DashboardController extends Controller
             : 0;
 
         // Daily orders - tüm siparişleri say
-        $daily_orders_count = Order::today()->count();
+        $daily_orders_count = Order::today()
+            ->where('status', 'delivered')
+            ->count();
+
+        $daily_cancelled_orders = Order::today()
+            ->where('status', 'cancelled')
+            ->count();
 
         // Popular items today - en çok sipariş edilen ürünler
         $daily_popular_items = OrderItem::with('menu')
             ->whereHas('order', function($query) {
-                $query->today();
+                $query->today()->where('status', 'delivered');
             })
             ->select('menu_id', DB::raw('SUM(quantity) as count'))
             ->groupBy('menu_id')
@@ -72,10 +78,17 @@ class DashboardController extends Controller
             });
 
         // Monthly orders
-        $monthly_orders_count = Order::thisMonth()->count();
+        $monthly_orders_count = Order::thisMonth()
+            ->where('status', 'delivered')
+            ->count();
+
+        $monthly_cancelled_orders = Order::thisMonth()
+            ->where('status', 'cancelled')
+            ->count();
 
         // Average daily orders for last week
         $average_daily_orders = Order::whereDate('created_at', '>=', $lastWeek)
+            ->where('status', 'delivered')
             ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
             ->groupBy('date')
             ->get()
@@ -84,6 +97,7 @@ class DashboardController extends Controller
         // Orders change percentage
         $last_week_average = Order::whereDate('created_at', '>=', $lastWeek->copy()->subWeek())
             ->whereDate('created_at', '<', $lastWeek)
+            ->where('status', 'delivered')
             ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
             ->groupBy('date')
             ->get()
@@ -96,7 +110,8 @@ class DashboardController extends Controller
         // Debug bilgisini view'a da gönderelim
         $debug = [
             'today_date' => $today->toDateString(),
-            'orders_count' => $todayOrders->count(),
+            'orders_count' => Order::today()->where('status', 'delivered')->count(),
+            'cancelled_orders_count' => Order::today()->where('status', 'cancelled')->count(),
             'raw_daily_revenue' => $daily_revenue,
             'formatted_daily_revenue' => number_format($daily_revenue, 2)
         ];
@@ -119,8 +134,10 @@ class DashboardController extends Controller
             'daily_revenue',
             'revenue_change',
             'daily_orders_count',
+            'daily_cancelled_orders',
             'daily_popular_items',
             'monthly_orders_count',
+            'monthly_cancelled_orders',
             'average_daily_orders',
             'orders_change',
             'debug',

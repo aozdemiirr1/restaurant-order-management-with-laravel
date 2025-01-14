@@ -36,9 +36,7 @@
                 <p class="text-xs font-medium text-gray-500 mb-1">Günlük Satışlar</p>
                 <h3 class="text-xl font-semibold text-gray-800">{{ $daily_orders_count }}</h3>
                 <div class="text-xs text-gray-400 mt-2">
-                    @foreach($daily_popular_items as $item)
-                        <p>{{ $item->name }}: {{ $item->count }} adet</p>
-                    @endforeach
+                    <p class="text-rose-500">{{ $daily_cancelled_orders }} iptal</p>
                 </div>
             </div>
             <div class="p-2 rounded-lg bg-gray-50">
@@ -55,6 +53,7 @@
                 <h3 class="text-xl font-semibold text-gray-800">{{ $monthly_orders_count }}</h3>
                 <p class="text-xs text-gray-400 mt-2">
                     Bu ay
+                    <span class="text-rose-500 block">{{ $monthly_cancelled_orders }} iptal</span>
                 </p>
             </div>
             <div class="p-2 rounded-lg bg-gray-50">
@@ -81,11 +80,38 @@
     </div>
 </div>
 
-<!-- Satış Grafiği -->
-<div class="bg-white rounded-lg shadow-sm p-5 border border-gray-100">
-    <h3 class="text-sm font-medium text-gray-800 mb-4">Satış Grafiği</h3>
-    <div class="h-72">
-        <canvas id="salesChart"></canvas>
+<!-- Alt Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-6">
+    <!-- Satış Grafiği -->
+    <div class="bg-white rounded-lg shadow-sm p-5 border border-gray-100 lg:col-span-2">
+        <h3 class="text-sm font-medium text-gray-800 mb-4">Satış Grafiği</h3>
+        <div class="h-72">
+            <canvas id="salesChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Popüler Ürünler -->
+    <div class="bg-white rounded-lg shadow-sm p-5 border border-gray-100">
+        <h3 class="text-sm font-medium text-gray-800 mb-4">Günün Popüler Ürünleri</h3>
+        <div class="space-y-4">
+            @foreach($daily_popular_items as $item)
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-700">{{ $item->name }}</p>
+                        <p class="text-xs text-gray-500">{{ $item->count }} adet satıldı</p>
+                    </div>
+                </div>
+                <div class="text-sm font-medium text-emerald-500">
+                    <i class="fas fa-arrow-up mr-1"></i>
+                    {{ $item->count }}
+                </div>
+            </div>
+            @if(!$loop->last)
+                <hr class="border-gray-100">
+            @endif
+            @endforeach
+        </div>
     </div>
 </div>
 

@@ -60,21 +60,26 @@ class DashboardController extends Controller
             ->where('status', 'cancelled')
             ->count();
 
-        // Popular items today - en çok sipariş edilen ürünler
-        $daily_popular_items = OrderItem::with('menu')
+        // Popular items today - en çok sipariş edilen ürünler (kategorilere göre gruplandırılmış)
+        $daily_popular_items = OrderItem::with(['menu.category'])
             ->whereHas('order', function($query) {
                 $query->today()->where('status', 'delivered');
             })
             ->select('menu_id', DB::raw('SUM(quantity) as count'))
             ->groupBy('menu_id')
             ->orderByDesc('count')
-            ->limit(3)
             ->get()
-            ->map(function($item) {
-                return (object)[
-                    'name' => $item->menu->name,
-                    'count' => $item->count
-                ];
+            ->groupBy(function($item) {
+                return $item->menu->category->name ?? 'Diğer';
+            })
+            ->map(function($items) {
+                return $items->map(function($item) {
+                    return (object)[
+                        'name' => $item->menu->name,
+                        'count' => $item->count,
+                        'category' => $item->menu->category->name ?? 'Diğer'
+                    ];
+                });
             });
 
         // Monthly orders

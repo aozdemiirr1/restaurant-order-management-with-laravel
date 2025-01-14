@@ -106,23 +106,30 @@
     <!-- Popüler Ürünler -->
     <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
         <h3 class="text-base font-semibold text-gray-800 mb-6">Günün Popüler Ürünleri</h3>
-        <div class="space-y-5">
-            @foreach($daily_popular_items as $item)
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
-                        <i class="fas fa-utensils text-gray-400"></i>
+        <div class="space-y-6">
+            @foreach($daily_popular_items as $category => $items)
+            <div>
+                <h4 class="text-sm font-medium text-gray-600 mb-3">{{ $category }}</h4>
+                <div class="space-y-4">
+                    @foreach($items as $item)
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center">
+                                <i class="fas fa-utensils text-gray-400"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-800">{{ $item->name }}</p>
+                                <p class="text-xs text-gray-500">{{ $item->count }} adet</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="text-sm font-medium text-emerald-500 bg-emerald-50 px-2.5 py-0.5 rounded-full">
+                                <i class="fas fa-arrow-up mr-1"></i>
+                                {{ $item->count }}
+                            </span>
+                        </div>
                     </div>
-                    <div>
-                        <p class="text-sm font-medium text-gray-800">{{ $item->name }}</p>
-                        <p class="text-xs text-gray-500">{{ $item->count }} adet</p>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <span class="text-sm font-medium text-emerald-500 bg-emerald-50 px-2.5 py-0.5 rounded-full">
-                        <i class="fas fa-arrow-up mr-1"></i>
-                        {{ $item->count }}
-                    </span>
+                    @endforeach
                 </div>
             </div>
             @if(!$loop->last)

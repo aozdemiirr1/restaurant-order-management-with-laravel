@@ -44,4 +44,40 @@ class Order extends Model
     {
         return self::getStatusOptions()[$this->status] ?? $this->status;
     }
+
+    // Toplam tutarı otomatik hesaplama
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($order) {
+            if (empty($order->total_amount)) {
+                $order->calculateTotalAmount();
+            }
+        });
+
+        static::updating(function ($order) {
+            $order->calculateTotalAmount();
+        });
+    }
+
+    // Toplam tutarı hesaplama metodu
+    public function calculateTotalAmount()
+    {
+        $this->total_amount = $this->items()->sum('subtotal');
+        return $this->total_amount;
+    }
+
+    // Bugünün siparişleri için scope
+    public function scopeToday($query)
+    {
+        return $query->whereDate('created_at', now());
+    }
+
+    // Bu ayki siparişler için scope
+    public function scopeThisMonth($query)
+    {
+        return $query->whereMonth('created_at', now()->month)
+                    ->whereYear('created_at', now()->year);
+    }
 }

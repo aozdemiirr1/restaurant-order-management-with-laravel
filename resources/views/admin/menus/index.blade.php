@@ -18,57 +18,62 @@
             console.error('Menü bilgileri alınamadı:', error);
         }
     }
-}" class="bg-white rounded-lg shadow-sm p-6 border border-gray-100">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-lg font-medium text-gray-800">Menü Listesi</h2>
-        <button @click="showAddModal = true" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 transition-colors">
-            <i class="fas fa-plus mr-2"></i>Yeni Menü
+}" class="bg-white">
+    <div class="flex justify-between items-center p-4 border-b">
+        <h2 class="text-base font-medium text-gray-700">Menü Listesi</h2>
+        <button @click="showAddModal = true" class="bg-[#f39c12] text-white px-3 py-1.5 rounded text-sm hover:bg-[#e67e22] transition-colors flex items-center gap-1.5">
+            <i class="fas fa-plus text-xs"></i>
+            <span>Yeni Menü</span>
         </button>
     </div>
 
     <div class="overflow-x-auto">
         <table class="w-full">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Görsel</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Menü Adı</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fiyat</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategori</th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
-                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
+            <thead>
+                <tr class="bg-gray-50 border-b">
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Görsel</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Menü Adı</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Fiyat</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Kategori</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Durum</th>
+                    <th class="px-4 py-3 text-right text-xs font-medium text-gray-600">İşlemler</th>
                 </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
+            <tbody class="divide-y divide-gray-100">
                 @foreach($menus as $menu)
-                <tr class="hover:bg-gray-50">
-                    <td class="px-4 py-3">
+                <tr class="hover:bg-gray-50/40 transition-colors">
+                    <td class="px-4 py-2.5 whitespace-nowrap">
                         @if($menu->image)
-                            <img src="{{ asset('storage/' . $menu->image) }}" alt="{{ $menu->name }}" class="w-16 h-16 object-cover rounded-lg">
+                            <img src="{{ asset('storage/' . $menu->image) }}" alt="{{ $menu->name }}" class="w-12 h-12 object-cover rounded">
                         @else
-                            <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <div class="w-12 h-12 bg-gray-50 rounded flex items-center justify-center">
                                 <i class="fas fa-utensils text-gray-400"></i>
                             </div>
                         @endif
                     </td>
-                    <td class="px-4 py-3">
-                        <div class="text-sm font-medium text-gray-900">{{ $menu->name }}</div>
-                        <div class="text-sm text-gray-500">{{ Str::limit($menu->description, 50) }}</div>
+                    <td class="px-4 py-2.5">
+                        <div class="text-sm text-gray-800">{{ $menu->name }}</div>
+                        <div class="text-xs text-gray-500">{{ Str::limit($menu->description, 50) }}</div>
                     </td>
-                    <td class="px-4 py-3 text-sm text-gray-900">₺{{ number_format($menu->price, 2) }}</td>
-                    <td class="px-4 py-3 text-sm text-gray-900">{{ $menu->category_name }}</td>
-                    <td class="px-4 py-3">
-                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded {{ $menu->is_available ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                    <td class="px-4 py-2.5">
+                        <div class="text-sm text-gray-800">₺{{ number_format($menu->price, 2) }}</div>
+                    </td>
+                    <td class="px-4 py-2.5">
+                        <div class="text-sm text-gray-800">{{ $menu->category_name }}</div>
+                    </td>
+                    <td class="px-4 py-2.5">
+                        <span class="px-2 py-0.5 inline-flex text-xs leading-5 font-medium rounded-sm {{ $menu->is_available ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700' }}">
                             {{ $menu->is_available ? 'Aktif' : 'Pasif' }}
                         </span>
                     </td>
-                    <td class="px-4 py-3 text-sm text-right space-x-2">
-                        <button @click="editMenu({{ $menu->id }})" class="text-blue-500 hover:text-blue-700">
+                    <td class="px-4 py-2.5 text-right space-x-1">
+                        <button @click="editMenu({{ $menu->id }})" class="text-gray-400 hover:text-blue-600 transition-colors">
                             <i class="fas fa-edit"></i>
                         </button>
                         <form action="{{ route('admin.menus.destroy', $menu) }}" method="POST" class="inline">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="text-red-500 hover:text-red-700" onclick="return confirm('Bu menüyü silmek istediğinize emin misiniz?')">
+                            <button type="submit" class="text-gray-400 hover:text-red-600 transition-colors" onclick="return confirm('Bu menüyü silmek istediğinize emin misiniz?')">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </form>
@@ -79,7 +84,7 @@
         </table>
     </div>
 
-    <div class="mt-4">
+    <div class="p-4 border-t">
         {{ $menus->links() }}
     </div>
 
@@ -96,51 +101,92 @@
             <div class="fixed inset-0 transition-opacity" aria-hidden="true">
                 <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
             </div>
-            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <div class="flex justify-between items-center pb-4 mb-4 border-b">
-                        <h3 class="text-lg font-medium text-gray-900">Yeni Menü Ekle</h3>
-                        <button @click="showAddModal = false" class="text-gray-400 hover:text-gray-500">
+            <div class="inline-block align-bottom bg-white rounded-sm text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white">
+                    <div class="flex justify-between items-center p-4 border-b">
+                        <h3 class="text-base font-medium text-gray-700">Yeni Menü Ekle</h3>
+                        <button @click="showAddModal = false" class="text-gray-400 hover:text-gray-600">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
-                    <form action="{{ route('admin.menus.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('admin.menus.store') }}" method="POST" enctype="multipart/form-data" class="p-4">
                         @csrf
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Menü Adı</label>
-                                <input type="text" name="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        <div class="space-y-5">
+                            <div class="relative">
+                                <label class="block text-sm font-medium text-gray-600 mb-1.5">Menü Adı</label>
+                                <div class="relative">
+                                    <input type="text" name="name" required
+                                        class="block w-full px-4 py-2.5 text-sm text-gray-900 bg-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-0 focus:border-[#f39c12] peer"
+                                        placeholder="Menü adını girin">
+                                </div>
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Açıklama</label>
-                                <textarea name="description" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
+
+                            <div class="relative">
+                                <label class="block text-sm font-medium text-gray-600 mb-1.5">Açıklama</label>
+                                <div class="relative">
+                                    <textarea name="description" rows="3"
+                                        class="block w-full px-4 py-2.5 text-sm text-gray-900 bg-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-0 focus:border-[#f39c12] peer"
+                                        placeholder="Menü açıklamasını girin"></textarea>
+                                </div>
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Fiyat</label>
-                                <input type="number" step="0.01" name="price" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+
+                            <div class="relative">
+                                <label class="block text-sm font-medium text-gray-600 mb-1.5">Fiyat</label>
+                                <div class="relative">
+                                    <input type="number" step="0.01" name="price" required
+                                        class="block w-full px-4 py-2.5 text-sm text-gray-900 bg-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-0 focus:border-[#f39c12] peer"
+                                        placeholder="0.00">
+                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                        <span class="text-gray-500 text-sm">₺</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Kategori</label>
-                                <select name="category_id" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                    @endforeach
-                                </select>
+
+                            <div class="relative">
+                                <label class="block text-sm font-medium text-gray-600 mb-1.5">Kategori</label>
+                                <div class="relative">
+                                    <select name="category_id" required
+                                        class="block w-full px-4 py-2.5 text-sm text-gray-900 bg-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-0 focus:border-[#f39c12] peer">
+                                        <option value="">Kategori seçin</option>
+                                        @foreach($categories as $category)
+                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                        <i class="fas fa-chevron-down text-gray-400"></i>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700">Görsel</label>
-                                <input type="file" name="image" accept="image/*" class="mt-1 block w-full">
+
+                            <div class="relative">
+                                <label class="block text-sm font-medium text-gray-600 mb-1.5">Görsel</label>
+                                <div class="relative">
+                                    <input type="file" name="image" accept="image/*"
+                                        class="block w-full text-sm text-gray-500
+                                        file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0
+                                        file:text-sm file:font-medium
+                                        file:bg-gray-50 file:text-gray-700
+                                        hover:file:bg-gray-100
+                                        focus:outline-none">
+                                </div>
                             </div>
+
                             <div class="flex items-center">
-                                <input type="checkbox" name="is_available" value="1" checked class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                <label class="ml-2 block text-sm text-gray-900">Aktif</label>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="is_available" value="1" checked class="sr-only peer">
+                                    <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#f39c12]"></div>
+                                    <span class="ml-2 text-sm font-medium text-gray-600">Aktif</span>
+                                </label>
                             </div>
                         </div>
-                        <div class="mt-5 sm:mt-6 flex justify-end space-x-3">
-                            <button type="button" @click="showAddModal = false" class="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+
+                        <div class="mt-8 flex justify-end gap-3">
+                            <button type="button" @click="showAddModal = false"
+                                class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 transition-colors">
                                 İptal
                             </button>
-                            <button type="submit" class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <button type="submit"
+                                class="px-4 py-2 text-sm font-medium text-white bg-[#f39c12] rounded-lg hover:bg-[#e67e22] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#f39c12] transition-colors">
                                 Kaydet
                             </button>
                         </div>
@@ -163,56 +209,97 @@
             <div class="fixed inset-0 transition-opacity" aria-hidden="true">
                 <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
             </div>
-            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                    <div class="flex justify-between items-center pb-4 mb-4 border-b">
-                        <h3 class="text-lg font-medium text-gray-900">Menü Düzenle</h3>
-                        <button @click="showEditModal = false" class="text-gray-400 hover:text-gray-500">
+            <div class="inline-block align-bottom bg-white rounded-sm text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white">
+                    <div class="flex justify-between items-center p-4 border-b">
+                        <h3 class="text-base font-medium text-gray-700">Menü Düzenle</h3>
+                        <button @click="showEditModal = false" class="text-gray-400 hover:text-gray-600">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
                     <template x-if="menuData">
-                        <form :action="'/admin/menus/' + editingMenu" method="POST" enctype="multipart/form-data">
+                        <form :action="'/admin/menus/' + editingMenu" method="POST" enctype="multipart/form-data" class="p-4">
                             @csrf
                             @method('PUT')
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Menü Adı</label>
-                                    <input type="text" name="name" x-model="menuData.name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Açıklama</label>
-                                    <textarea name="description" rows="3" x-model="menuData.description" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"></textarea>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Fiyat</label>
-                                    <input type="number" step="0.01" name="price" x-model="menuData.price" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Kategori</label>
-                                    <select name="category_id" x-model="menuData.category_id" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                        @foreach($categories as $category)
-                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700">Görsel</label>
-                                    <div x-show="menuData.image" class="mt-2 mb-2">
-                                        <img :src="'/storage/' + menuData.image" class="w-32 h-32 object-cover rounded-lg">
+                            <div class="space-y-5">
+                                <div class="relative">
+                                    <label class="block text-sm font-medium text-gray-600 mb-1.5">Menü Adı</label>
+                                    <div class="relative">
+                                        <input type="text" name="name" x-model="menuData.name" required
+                                            class="block w-full px-4 py-2.5 text-sm text-gray-900 bg-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-0 focus:border-[#f39c12] peer"
+                                            placeholder="Menü adını girin">
                                     </div>
-                                    <input type="file" name="image" accept="image/*" class="mt-1 block w-full">
                                 </div>
+
+                                <div class="relative">
+                                    <label class="block text-sm font-medium text-gray-600 mb-1.5">Açıklama</label>
+                                    <div class="relative">
+                                        <textarea name="description" rows="3" x-model="menuData.description"
+                                            class="block w-full px-4 py-2.5 text-sm text-gray-900 bg-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-0 focus:border-[#f39c12] peer"
+                                            placeholder="Menü açıklamasını girin"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="relative">
+                                    <label class="block text-sm font-medium text-gray-600 mb-1.5">Fiyat</label>
+                                    <div class="relative">
+                                        <input type="number" step="0.01" name="price" x-model="menuData.price" required
+                                            class="block w-full px-4 py-2.5 text-sm text-gray-900 bg-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-0 focus:border-[#f39c12] peer"
+                                            placeholder="0.00">
+                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                            <span class="text-gray-500 text-sm">₺</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="relative">
+                                    <label class="block text-sm font-medium text-gray-600 mb-1.5">Kategori</label>
+                                    <div class="relative">
+                                        <select name="category_id" x-model="menuData.category_id" required
+                                            class="block w-full px-4 py-2.5 text-sm text-gray-900 bg-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-0 focus:border-[#f39c12] peer">
+                                            <option value="">Kategori seçin</option>
+                                            @foreach($categories as $category)
+                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                            <i class="fas fa-chevron-down text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="relative">
+                                    <label class="block text-sm font-medium text-gray-600 mb-1.5">Görsel</label>
+                                    <div x-show="menuData.image" class="mb-3">
+                                        <img :src="'/storage/' + menuData.image" class="w-24 h-24 object-cover rounded-lg border border-gray-200">
+                                    </div>
+                                    <div class="relative">
+                                        <input type="file" name="image" accept="image/*"
+                                            class="block w-full text-sm text-gray-500
+                                            file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0
+                                            file:text-sm file:font-medium
+                                            file:bg-gray-50 file:text-gray-700
+                                            hover:file:bg-gray-100
+                                            focus:outline-none">
+                                    </div>
+                                </div>
+
                                 <div class="flex items-center">
-                                    <input type="checkbox" name="is_available" x-model="menuData.is_available" value="1" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                    <label class="ml-2 block text-sm text-gray-900">Aktif</label>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" name="is_available" x-model="menuData.is_available" value="1" class="sr-only peer">
+                                        <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#f39c12]"></div>
+                                        <span class="ml-2 text-sm font-medium text-gray-600">Aktif</span>
+                                    </label>
                                 </div>
                             </div>
-                            <div class="mt-5 sm:mt-6 flex justify-end space-x-3">
-                                <button type="button" @click="showEditModal = false" class="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+
+                            <div class="mt-8 flex justify-end gap-3">
+                                <button type="button" @click="showEditModal = false"
+                                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 transition-colors">
                                     İptal
                                 </button>
-                                <button type="submit" class="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                <button type="submit"
+                                    class="px-4 py-2 text-sm font-medium text-white bg-[#f39c12] rounded-lg hover:bg-[#e67e22] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#f39c12] transition-colors">
                                     Güncelle
                                 </button>
                             </div>

@@ -42,7 +42,7 @@
             <!-- Robot Image - Center -->
             <img src="https://file.aiquickdraw.com/imgcompressed/img/compressed_366e93819330a30cdb8ba1bf8f265b35.webp"
                  alt="AI Robot"
-                 class="w-72 h-auto z-10">
+                 class="w-96 h-auto z-10">
 
             <div class="absolute bottom-20 left-20">
                 <!-- Order Card -->

@@ -36,8 +36,8 @@
 <body>
     <div class="min-h-screen flex bg-gray-50">
         <!-- Sidebar -->
-        <div class="w-60 gradient-bg text-white">
-            <div class="p-5 border-b border-gray-700/30">
+        <div class="w-60 bg-red-900 text-white">
+            <div class="p-5 border-b border-white-700/30">
                 <h2 class="text-xl font-semibold text-gray-100">Saklı Saray</h2>
             </div>
             <nav class="mt-5 px-3">

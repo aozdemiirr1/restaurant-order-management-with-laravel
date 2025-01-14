@@ -26,6 +26,11 @@ class CategorySeeder extends Seeder
                 'is_active' => true
             ],
             [
+                'name' => 'Ciğerler',
+                'description' => 'Ciğer çeşitleri',
+                'is_active' => true
+            ],
+            [
                 'name' => 'Yan Ürünler',
                 'description' => 'Çorbalar, salatalar ve diğer yan ürünler',
                 'is_active' => true

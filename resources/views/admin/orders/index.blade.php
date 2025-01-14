@@ -192,7 +192,7 @@
                         <div class="text-sm font-medium text-gray-900">₺{{ number_format($order->total_amount, 2) }}</div>
                     </td>
                     <td class="px-4 py-3">
-                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-medium rounded-full
+                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-medium rounded
                             @if($order->status == 'preparing') bg-yellow-100 text-yellow-800
                             @elseif($order->status == 'delivered') bg-green-100 text-green-800
                             @else bg-red-100 text-red-800 @endif">

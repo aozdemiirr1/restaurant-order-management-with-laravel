@@ -22,12 +22,14 @@ class DashboardController extends Controller
 
         // Daily revenue - tüm siparişleri dahil et (status kontrolünü kaldırdık)
         $daily_revenue = Order::today()
+            ->where('status', 'delivered')
             ->sum('total_amount');
 
         Log::info('Daily revenue:', ['amount' => $daily_revenue]);
 
         // Debug için sipariş detaylarını logla
         $orderDetails = Order::today()
+            ->where('status', 'delivered')
             ->with('items')
             ->get()
             ->map(function($order) {
@@ -42,6 +44,7 @@ class DashboardController extends Controller
         Log::info('Order details:', $orderDetails->toArray());
 
         $yesterday_revenue = Order::whereDate('created_at', $yesterday)
+            ->where('status', 'delivered')
             ->sum('total_amount');
 
         $revenue_change = $yesterday_revenue > 0
@@ -100,6 +103,7 @@ class DashboardController extends Controller
 
         // Get sales data for the last 7 days
         $sales_data = Order::whereDate('created_at', '>=', now()->subDays(7))
+            ->where('status', 'delivered')
             ->selectRaw('DATE(created_at) as date, SUM(total_amount) as total')
             ->groupBy('date')
             ->orderBy('date')

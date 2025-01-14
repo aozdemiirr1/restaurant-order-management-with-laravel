@@ -38,7 +38,13 @@ class CustomerController extends Controller
 
     public function edit(Customer $customer)
     {
-        return view('admin.customers.edit', compact('customer'));
+        return response()->json([
+            'id' => $customer->id,
+            'name' => $customer->name,
+            'phone' => $customer->phone,
+            'email' => $customer->email,
+            'address' => $customer->address
+        ]);
     }
 
     public function update(Request $request, Customer $customer)

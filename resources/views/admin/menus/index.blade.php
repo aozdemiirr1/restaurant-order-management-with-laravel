@@ -6,9 +6,14 @@
 <div x-data="{
     showAddModal: false,
     showEditModal: false,
+    showFilters: false,
+    showDeleteModal: false,
     editingMenu: null,
     menuData: null,
-    showFilters: false,
+    deleteModalTitle: '',
+    deleteModalMessage: '',
+    deleteModalAction: '',
+
     async editMenu(id) {
         this.editingMenu = id;
         try {
@@ -18,6 +23,13 @@
         } catch (error) {
             console.error('Menü bilgileri alınamadı:', error);
         }
+    },
+
+    confirmDelete(id, name) {
+        this.deleteModalTitle = 'Menüyü Sil';
+        this.deleteModalMessage = `${name} isimli menüyü silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`;
+        this.deleteModalAction = `/admin/menus/${id}`;
+        this.showDeleteModal = true;
     }
 }" class="bg-white rounded-lg shadow-sm">
     <div class="flex justify-between items-center p-4 border-b">
@@ -188,15 +200,10 @@
                                 class="text-blue-400 hover:text-blue-800 bg-blue-100 hover:bg-blue-200 rounded px-2 py-1 transition-colors">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <form action="{{ route('admin.menus.destroy', $menu) }}" method="POST" class="inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit"
-                                    class="text-red-400 hover:text-red-800 bg-red-100 hover:bg-red-200 rounded px-2 py-1 transition-colors"
-                                    onclick="return confirm('Bu menüyü silmek istediğinize emin misiniz?')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </form>
+                        <button @click="confirmDelete({{ $menu->id }}, '{{ $menu->name }}')"
+                                class="text-red-400 hover:text-red-800 bg-red-100 hover:bg-red-200 rounded px-2 py-1 transition-colors">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </td>
                 </tr>
                 @empty
@@ -438,5 +445,8 @@
             </div>
         </div>
     </div>
+
+    <!-- Delete Confirmation Modal -->
+    @include('partials.delete-modal')
 </div>
 @endsection

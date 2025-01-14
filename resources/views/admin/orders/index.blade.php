@@ -7,7 +7,12 @@
     showAddModal: false,
     showViewModal: false,
     showFilters: false,
+    showDeleteModal: false,
     orderData: null,
+    deleteModalTitle: '',
+    deleteModalMessage: '',
+    deleteModalAction: '',
+
     async viewOrder(id) {
         try {
             const response = await fetch(`/admin/orders/${id}`);
@@ -16,6 +21,13 @@
         } catch (error) {
             console.error('Sipariş bilgileri alınamadı:', error);
         }
+    },
+
+    confirmDelete(id) {
+        this.deleteModalTitle = 'Siparişi Sil';
+        this.deleteModalMessage = `#${id} numaralı siparişi silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`;
+        this.deleteModalAction = `/admin/orders/${id}`;
+        this.showDeleteModal = true;
     }
 }" class="bg-white rounded-lg shadow-sm">
     <div class="flex justify-between items-center p-4 border-b">
@@ -209,15 +221,10 @@
                                 class="text-blue-400 hover:text-blue-800 bg-blue-100 hover:bg-blue-200 rounded px-2 py-1 transition-colors">
                             <i class="fas fa-eye"></i>
                         </button>
-                        <form action="{{ route('admin.orders.destroy', $order) }}" method="POST" class="inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit"
-                                    class="text-red-400 hover:text-red-800 bg-red-100 hover:bg-red-200 rounded px-2 py-1 transition-colors"
-                                    onclick="return confirm('Bu siparişi silmek istediğinize emin misiniz?')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </form>
+                        <button @click="confirmDelete({{ $order->id }})"
+                                class="text-red-400 hover:text-red-800 bg-red-100 hover:bg-red-200 rounded px-2 py-1 transition-colors">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </td>
                 </tr>
                 @empty
@@ -456,6 +463,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Delete Confirmation Modal -->
+    @include('partials.delete-modal')
 </div>
 
 @push('scripts')

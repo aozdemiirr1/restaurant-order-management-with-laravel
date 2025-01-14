@@ -7,7 +7,18 @@
     showAddModal: false,
     showEditModal: false,
     showFilters: false,
+    showDeleteModal: false,
     customerData: null,
+    deleteModalTitle: '',
+    deleteModalMessage: '',
+    deleteModalAction: '',
+
+    confirmDelete(id, name) {
+        this.deleteModalTitle = 'Müşteriyi Sil';
+        this.deleteModalMessage = `${name} isimli müşteriyi silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`;
+        this.deleteModalAction = `/admin/customers/${id}`;
+        this.showDeleteModal = true;
+    }
 }" class="bg-white rounded-lg shadow-sm">
     <div class="flex justify-between items-center p-4 border-b">
         <div class="flex items-center gap-4">
@@ -88,15 +99,10 @@
                                 class="text-blue-400 hover:text-blue-800 bg-blue-100 hover:bg-blue-200 rounded px-2 py-1 transition-colors">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <form action="{{ route('admin.customers.destroy', $customer) }}" method="POST" class="inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit"
-                                    class="text-red-400 hover:text-red-800 bg-red-100 hover:bg-red-200 rounded px-2 py-1 transition-colors"
-                                    onclick="return confirm('Bu müşteriyi silmek istediğinize emin misiniz?')">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </form>
+                        <button @click="confirmDelete({{ $customer->id }}, '{{ $customer->name }}')"
+                                class="text-red-400 hover:text-red-800 bg-red-100 hover:bg-red-200 rounded px-2 py-1 transition-colors">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </td>
                 </tr>
                 @empty
@@ -289,5 +295,8 @@
             </div>
         </div>
     </div>
+
+    <!-- Delete Confirmation Modal -->
+    @include('partials.delete-modal')
 </div>
 @endsection

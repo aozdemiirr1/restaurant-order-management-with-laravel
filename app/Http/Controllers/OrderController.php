@@ -15,7 +15,7 @@ class OrderController extends Controller
     {
         $orders = Order::with(['customer', 'items.menu'])
             ->latest()
-            ->get();
+            ->paginate(10);
         return view('admin.orders.index', compact('orders'));
     }
 

@@ -9,7 +9,7 @@ class MenuController extends Controller
 {
     public function index()
     {
-        $menus = Menu::latest()->get();
+        $menus = Menu::latest()->paginate(10);
         return view('admin.menus.index', compact('menus'));
     }
 

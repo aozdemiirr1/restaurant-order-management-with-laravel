@@ -21,4 +21,14 @@ class Menu extends Model
         'is_available' => 'boolean',
         'stock' => 'integer'
     ];
+
+    public function getCategoryNameAttribute()
+    {
+        return match($this->category) {
+            'döner' => 'Döner',
+            'içecek' => 'İçecek',
+            'tatlı' => 'Tatlı',
+            default => $this->category
+        };
+    }
 }

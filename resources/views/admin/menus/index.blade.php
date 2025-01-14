@@ -8,6 +8,7 @@
     showEditModal: false,
     editingMenu: null,
     menuData: null,
+    showFilters: false,
     async editMenu(id) {
         this.editingMenu = id;
         try {
@@ -18,19 +19,134 @@
             console.error('Menü bilgileri alınamadı:', error);
         }
     }
-}" class="bg-white">
+}" class="bg-white rounded-lg shadow-sm">
     <div class="flex justify-between items-center p-4 border-b">
-        <h2 class="text-base font-medium text-gray-700">Menü Listesi</h2>
-        <button @click="showAddModal = true" class="bg-red-700 text-white px-3 py-1.5 rounded text-sm transition-colors flex items-center gap-1.5">
-            <i class="fas fa-plus text-xs"></i>
-            <span>Yeni Menü</span>
-        </button>
+        <div class="flex items-center gap-4">
+            <h2 class="text-lg font-semibold text-gray-800">Menü Listesi</h2>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2">
+                <button @click="showFilters = !showFilters" class="text-white bg-blue-400 px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-1.5">
+                    <i class="fas fa-filter"></i>
+                    <span>Filtreler</span>
+                    <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+                </button>
+                @if(request()->hasAny(['search', 'category', 'min_price', 'max_price', 'status', 'sort']))
+                    <a href="{{ route('admin.menus.index') }}"
+                    class="text-white bg-red-400 px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-1.5">
+                        <i class="fas fa-times text-xs"></i>
+                        <span>Sıfırla</span>
+                    </a>
+                @endif
+            </div>
+            <button @click="showAddModal = true" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-1.5 font-medium">
+                <i class="fas fa-plus text-xs"></i>
+                <span>Yeni Menü</span>
+            </button>
+        </div>
     </div>
 
+    <!-- Filtreleme Alanı -->
+    <div x-show="showFilters" x-transition
+         class="border-b bg-gray-50/50 p-4">
+        <form action="{{ route('admin.menus.index') }}" method="GET" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Arama -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Arama</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-search text-gray-400 text-sm"></i>
+                        </div>
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            class="block w-full pl-10 pr-3 py-2 border-gray-200 rounded-lg text-sm focus:border-red-500 focus:ring-red-500 shadow-sm"
+                            placeholder="Menü adı veya açıklama...">
+                    </div>
+                </div>
+
+                <!-- Kategori -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                    <div class="relative">
+                        <select name="category" class="block w-full pl-3 pr-10 py-2 text-base border-gray-200 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm rounded-lg shadow-sm">
+                            <option value="">Tüm Kategoriler</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                    </div>
+                </div>
+
+                <!-- Fiyat Aralığı -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Fiyat Aralığı</label>
+                    <div class="flex space-x-2">
+                        <div class="relative flex-1">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500 sm:text-sm">₺</span>
+                            </div>
+                            <input type="number" name="min_price" value="{{ request('min_price') }}" step="0.01"
+                                class="block w-full pl-7 pr-3 py-2 border-gray-200 rounded-lg text-sm focus:border-red-500 focus:ring-red-500 shadow-sm"
+                                placeholder="Min">
+                        </div>
+                        <div class="relative flex-1">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500 sm:text-sm">₺</span>
+                            </div>
+                            <input type="number" name="max_price" value="{{ request('max_price') }}" step="0.01"
+                                class="block w-full pl-7 pr-3 py-2 border-gray-200 rounded-lg text-sm focus:border-red-500 focus:ring-red-500 shadow-sm"
+                                placeholder="Max">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Durum ve Sıralama -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Durum</label>
+                        <div class="relative">
+                            <select name="status" class="block w-full pl-3 pr-10 py-2 text-base border-gray-200 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm rounded-lg shadow-sm">
+                                <option value="">Tümü</option>
+                                <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Aktif</option>
+                                <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Pasif</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Sıralama</label>
+                        <div class="relative">
+                            <select name="sort" class="block w-full pl-3 pr-10 py-2 text-base border-gray-200 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm rounded-lg shadow-sm">
+                                <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>En Yeni</option>
+                                <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Fiyat (Artan)</option>
+                                <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Fiyat (Azalan)</option>
+                                <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>İsim (A-Z)</option>
+                                <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>İsim (Z-A)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Butonlar -->
+            <div class="flex justify-end gap-2 pt-4 border-t">
+                <button type="submit"
+                    class="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors">
+                    <i class="fas fa-filter mr-2 text-xs"></i>
+                    Filtrele
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tablo -->
     <div class="overflow-x-auto">
         <table class="w-full">
             <thead>
-                <tr class="bg-gray-50 border-b">
+                <tr class="bg-gray-50/50">
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Görsel</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Menü Adı</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Fiyat</th>
@@ -40,46 +156,59 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
-                @foreach($menus as $menu)
+                @forelse($menus as $menu)
                 <tr class="hover:bg-gray-50/40 transition-colors">
-                    <td class="px-4 py-2.5 whitespace-nowrap">
+                    <td class="px-4 py-3 whitespace-nowrap">
                         @if($menu->image)
-                            <img src="{{ asset('storage/' . $menu->image) }}" alt="{{ $menu->name }}" class="w-12 h-12 object-cover rounded">
+                            <img src="{{ asset('storage/' . $menu->image) }}" alt="{{ $menu->name }}"
+                                 class="w-12 h-12 object-cover rounded-lg shadow-sm">
                         @else
-                            <div class="w-12 h-12 bg-gray-50 rounded flex items-center justify-center">
+                            <div class="w-12 h-12 bg-gray-100 rounded-lg shadow-sm flex items-center justify-center">
                                 <i class="fas fa-utensils text-gray-400"></i>
                             </div>
                         @endif
                     </td>
-                    <td class="px-4 py-2.5">
-                        <div class="text-sm text-gray-800">{{ $menu->name }}</div>
+                    <td class="px-4 py-3">
+                        <div class="text-sm font-medium text-gray-900">{{ $menu->name }}</div>
                         <div class="text-xs text-gray-500">{{ Str::limit($menu->description, 50) }}</div>
                     </td>
-                    <td class="px-4 py-2.5">
-                        <div class="text-sm text-gray-800">₺{{ number_format($menu->price, 2) }}</div>
+                    <td class="px-4 py-3">
+                        <div class="text-sm font-medium text-gray-900">₺{{ number_format($menu->price, 2) }}</div>
                     </td>
-                    <td class="px-4 py-2.5">
-                        <div class="text-sm text-gray-800">{{ $menu->category_name }}</div>
+                    <td class="px-4 py-3">
+                        <div class="text-sm text-gray-900">{{ $menu->category->name }}</div>
                     </td>
-                    <td class="px-4 py-2.5">
-                        <span class="px-2 py-0.5 inline-flex text-xs leading-5 font-medium rounded-sm {{ $menu->is_available ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700' }}">
+                    <td class="px-4 py-3">
+                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-medium rounded {{ $menu->is_available ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                             {{ $menu->is_available ? 'Aktif' : 'Pasif' }}
                         </span>
                     </td>
-                    <td class="px-4 py-2.5 text-right space-x-1">
-                        <button @click="editMenu({{ $menu->id }})" class="text-white bg-blue-500 rounded px-2 py-1 ">
+                    <td class="px-4 py-3 text-right space-x-1">
+                        <button @click="editMenu({{ $menu->id }})"
+                                class="text-blue-600 hover:text-blue-800 bg-blue-100 hover:bg-blue-200 rounded-lg p-2 transition-colors">
                             <i class="fas fa-edit"></i>
                         </button>
                         <form action="{{ route('admin.menus.destroy', $menu) }}" method="POST" class="inline">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="text-white bg-red-500 rounded px-2 py-1" onclick="return confirm('Bu menüyü silmek istediğinize emin misiniz?')">
+                            <button type="submit"
+                                    class="text-red-600 hover:text-red-800 bg-red-100 hover:bg-red-200 rounded-lg p-2 transition-colors"
+                                    onclick="return confirm('Bu menüyü silmek istediğinize emin misiniz?')">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </form>
                     </td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+                        <div class="flex flex-col items-center justify-center space-y-2">
+                            <i class="fas fa-search text-2xl"></i>
+                            <p class="text-sm">Menü bulunamadı.</p>
+                        </div>
+                    </td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

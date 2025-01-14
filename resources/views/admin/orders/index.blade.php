@@ -437,7 +437,7 @@
 
                                 <!-- Durum Güncelleme Butonları -->
                                 <div x-show="orderData.status === 'preparing'" class="flex justify-end gap-3">
-                                    <form :action="'/admin/orders/' + orderData.id + '/update-status'" method="POST">
+                                    <form :action="'/admin/orders/' + orderData.id + '/status'" method="POST">
                                         @csrf
                                         @method('PUT')
                                         <input type="hidden" name="status" value="delivered">
@@ -446,7 +446,7 @@
                                             Teslim Edildi
                                         </button>
                                     </form>
-                                    <form :action="'/admin/orders/' + orderData.id + '/update-status'" method="POST">
+                                    <form :action="'/admin/orders/' + orderData.id + '/status'" method="POST">
                                         @csrf
                                         @method('PUT')
                                         <input type="hidden" name="status" value="cancelled">

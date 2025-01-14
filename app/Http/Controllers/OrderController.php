@@ -11,12 +11,67 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::with(['customer', 'items.menu'])
-            ->latest()
-            ->paginate(10);
+        $query = Order::with(['customer', 'items.menu']);
 
+        // Müşteri filtresi
+        if ($request->filled('customer')) {
+            $query->where('customer_id', $request->customer);
+        }
+
+        // Durum filtresi
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Tarih aralığı filtresi
+        if ($request->filled('start_date')) {
+            $query->whereDate('created_at', '>=', $request->start_date);
+        }
+        if ($request->filled('end_date')) {
+            $query->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        // Tutar aralığı filtresi
+        if ($request->filled('min_amount')) {
+            $query->where('total_amount', '>=', $request->min_amount);
+        }
+        if ($request->filled('max_amount')) {
+            $query->where('total_amount', '<=', $request->max_amount);
+        }
+
+        // Arama filtresi (Sipariş ID veya müşteri bilgileri)
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('id', 'like', '%' . $searchTerm . '%')
+                  ->orWhereHas('customer', function($q) use ($searchTerm) {
+                      $q->where('name', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('phone', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('email', 'like', '%' . $searchTerm . '%');
+                  });
+            });
+        }
+
+        // Sıralama
+        $sort = $request->input('sort', 'latest');
+        switch ($sort) {
+            case 'oldest':
+                $query->oldest();
+                break;
+            case 'amount_asc':
+                $query->orderBy('total_amount', 'asc');
+                break;
+            case 'amount_desc':
+                $query->orderBy('total_amount', 'desc');
+                break;
+            default:
+                $query->latest();
+                break;
+        }
+
+        $orders = $query->paginate(10)->withQueryString();
         $customers = Customer::all();
         $menus = Menu::where('is_available', true)->get();
 

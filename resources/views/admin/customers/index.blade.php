@@ -13,6 +13,16 @@
     deleteModalMessage: '',
     deleteModalAction: '',
 
+    async editCustomer(id) {
+        try {
+            const response = await fetch(`/admin/customers/${id}/edit`);
+            this.customerData = await response.json();
+            this.showEditModal = true;
+        } catch (error) {
+            console.error('Müşteri bilgileri alınamadı:', error);
+        }
+    },
+
     confirmDelete(id, name) {
         this.deleteModalTitle = 'Müşteriyi Sil';
         this.deleteModalMessage = `${name} isimli müşteriyi silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`;
@@ -230,18 +240,18 @@
                         </button>
                     </div>
                     <template x-if="customerData">
-                        <form :action="'/admin/customers/' + editingCustomer" method="POST" class="p-4">
+                        <form :action="'/admin/customers/' + customerData.id" method="POST" class="p-4">
                             @csrf
                             @method('PUT')
                             <div class="space-y-5">
                                 <div class="relative">
                                     <label class="block text-sm font-medium text-gray-600 mb-1.5">
-                                        Müşteri Adı
+                                        Ad Soyad
                                     </label>
                                     <div class="relative">
                                         <input type="text" name="name" x-model="customerData.name" required
                                             class="block w-full px-4 py-2.5 text-sm text-gray-900 bg-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-0 focus:border-[#f39c12] peer"
-                                            placeholder="Müşteri adını girin">
+                                            placeholder="Ad soyad girin">
                                     </div>
                                 </div>
 
@@ -250,7 +260,7 @@
                                         Telefon
                                     </label>
                                     <div class="relative">
-                                        <input type="tel" name="phone" x-model="customerData.phone"
+                                        <input type="tel" name="phone" x-model="customerData.phone" required
                                             class="block w-full px-4 py-2.5 text-sm text-gray-900 bg-transparent border border-gray-300 rounded-lg appearance-none focus:outline-none focus:ring-0 focus:border-[#f39c12] peer"
                                             placeholder="Telefon numarası girin">
                                     </div>

@@ -66,7 +66,7 @@
                         <div class="text-sm text-gray-800">{{ $order->created_at->format('d.m.Y H:i') }}</div>
                     </td>
                     <td class="px-4 py-2.5 text-right space-x-1">
-                        <button @click="viewOrder({{ $order->id }})" class="text-gray-400 hover:text-blue-600 transition-colors">
+                        <button @click="viewOrder({{ $order->id }})" class="text-white bg-blue-500 rounded px-2 py-1">
                             <i class="fas fa-eye"></i>
                         </button>
                         @if($order->status === 'preparing')
@@ -74,7 +74,7 @@
                             @csrf
                             @method('PUT')
                             <input type="hidden" name="status" value="delivered">
-                            <button type="submit" class="text-gray-400 hover:text-green-600 transition-colors">
+                            <button type="submit" class="text-white bg-green-500 rounded px-2 py-1">
                                 <i class="fas fa-check"></i>
                             </button>
                         </form>
@@ -82,7 +82,7 @@
                             @csrf
                             @method('PUT')
                             <input type="hidden" name="status" value="cancelled">
-                            <button type="submit" class="text-gray-400 hover:text-red-600 transition-colors">
+                            <button type="submit" class="text-white bg-red-500 rounded px-2 py-1">
                                 <i class="fas fa-times"></i>
                             </button>
                         </form>

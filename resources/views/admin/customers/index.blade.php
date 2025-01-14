@@ -54,13 +54,13 @@
                         <div class="text-sm text-gray-800">{{ $customer->created_at->format('d.m.Y') }}</div>
                     </td>
                     <td class="px-4 py-2.5 text-right space-x-1">
-                        <button @click="editCustomer({{ $customer->id }})" class="text-gray-400 hover:text-blue-600 transition-colors">
+                        <button @click="editCustomer({{ $customer->id }})" class="text-white bg-blue-500 rounded px-2 py-1">
                             <i class="fas fa-edit"></i>
                         </button>
                         <form action="{{ route('admin.customers.destroy', $customer) }}" method="POST" class="inline">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="text-gray-400 hover:text-red-600 transition-colors" onclick="return confirm('Bu müşteriyi silmek istediğinize emin misiniz?')">
+                            <button type="submit" class="text-white bg-red-500 rounded px-2 py-1" onclick="return confirm('Bu müşteriyi silmek istediğinize emin misiniz?')">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </form>

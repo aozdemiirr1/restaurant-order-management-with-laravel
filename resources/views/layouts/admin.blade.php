@@ -52,6 +52,11 @@
                     <span>Ciro Raporu</span>
                 </a>
 
+                <a href="{{ route('admin.expenses.index') }}" class="flex items-center px-4 py-3 mb-2 {{ request()->routeIs('admin.expenses.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
+                    <i class="fas fa-money-bill-wave mr-3 text-sm"></i>
+                    <span>Giderler</span>
+                </a>
+
                 <p class="text-xs text-gray-400">Restaurant Menus</p>
                 <a href="{{ route('admin.menus.index') }}" class="flex items-center px-4 py-3 mb-2 {{ request()->routeIs('admin.menus.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
                     <i class="fas fa-utensils mr-3 text-sm"></i>

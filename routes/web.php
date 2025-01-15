@@ -8,6 +8,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderArchiveController;
 use App\Http\Controllers\Admin\RevenueController;
+use App\Http\Controllers\Admin\ExpenseController;
 
 // Ana sayfa route'u login sayfasına yönlendirir
 Route::redirect('/', '/admin/login');
@@ -42,4 +43,7 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
 
     // Revenue routes
     Route::get('/revenue', [RevenueController::class, 'index'])->name('revenue.index');
+
+    // Expense routes
+    Route::resource('expenses', ExpenseController::class);
 });

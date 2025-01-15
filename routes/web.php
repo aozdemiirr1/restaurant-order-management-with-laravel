@@ -18,7 +18,9 @@ Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.lo
 
 // Admin Protected Routes
 Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Dashboard routes
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
     // Menu routes
     Route::resource('menus', MenuController::class);

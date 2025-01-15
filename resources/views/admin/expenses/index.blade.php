@@ -56,13 +56,9 @@
                             <button onclick="editExpense({{ $expense->id }})" class="text-blue-400 hover:text-blue-800 bg-blue-100 hover:bg-blue-200 rounded px-2 py-1 transition-colors">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <form action="{{ route('admin.expenses.destroy', $expense) }}" method="POST" class="inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-400 hover:text-red-800 bg-red-100 hover:bg-red-200 rounded px-2 py-1 transition-colors" onclick="return confirm('Bu gideri silmek istediğinizden emin misiniz?')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
+                            <button onclick="showDeleteModal({{ $expense->id }})" class="text-red-400 hover:text-red-800 bg-red-100 hover:bg-red-200 rounded px-2 py-1 transition-colors">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </td>
                     </tr>
                     @empty
@@ -175,6 +171,36 @@
     </div>
 </div>
 
+<!-- Delete Modal -->
+<div id="delete-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="relative w-96 shadow-lg rounded-lg bg-white">
+            <div class="p-6 text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                    <i class="fas fa-exclamation-triangle text-red-600"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Gider Silinecek</h3>
+                <p class="text-sm text-gray-500">Bu gideri silmek istediğinizden emin misiniz?</p>
+                <p class="text-xs text-gray-500 mt-1">Bu işlem geri alınamaz.</p>
+                <form id="delete-form" method="POST" class="mt-4">
+                    @csrf
+                    @method('DELETE')
+                    <div class="flex gap-x-3 justify-center">
+                        <button type="button" onclick="Modals.hide('delete-modal')"
+                            class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            İptal
+                        </button>
+                        <button type="submit"
+                            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                            Sil
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
 <script>
 const Modals = {
@@ -226,6 +252,17 @@ function editExpense(id) {
         });
 }
 
+function showDeleteModal(id) {
+    document.getElementById('delete-form').action = `/admin/expenses/${id}`;
+    Modals.show('delete-modal', false);
+}
+
+document.getElementById('delete-modal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        Modals.hide('delete-modal');
+    }
+});
+
 document.getElementById('expense-modal').addEventListener('click', function(e) {
     if (e.target === this) {
         Modals.hide('expense-modal');
@@ -235,6 +272,7 @@ document.getElementById('expense-modal').addEventListener('click', function(e) {
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         Modals.hide('expense-modal');
+        Modals.hide('delete-modal');
     }
 });
 </script>

@@ -12,9 +12,9 @@ class OrderArchiveController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Order::onlyTrashed()
+        $query = Order::whereNotNull('archived_at')
             ->with('customer')
-            ->orderBy('deleted_at', 'desc');
+            ->orderBy('archived_at', 'desc');
 
         // Filtreleme
         if ($request->filled('status')) {
@@ -26,11 +26,11 @@ class OrderArchiveController extends Controller
         }
 
         if ($request->filled('date_from')) {
-            $query->whereDate('deleted_at', '>=', $request->date_from);
+            $query->whereDate('archived_at', '>=', $request->date_from);
         }
 
         if ($request->filled('date_to')) {
-            $query->whereDate('deleted_at', '<=', $request->date_to);
+            $query->whereDate('archived_at', '<=', $request->date_to);
         }
 
         $archivedOrders = $query->paginate(10)->withQueryString();
@@ -41,7 +41,7 @@ class OrderArchiveController extends Controller
 
     public function show($id)
     {
-        $order = Order::onlyTrashed()
+        $order = Order::whereNotNull('archived_at')
             ->with(['customer', 'items.menu'])
             ->findOrFail($id);
 
@@ -61,16 +61,16 @@ class OrderArchiveController extends Controller
             'status' => $order->status,
             'notes' => $order->notes,
             'created_at' => $order->created_at->format('d.m.Y H:i'),
-            'deleted_at' => $order->deleted_at->format('d.m.Y H:i'),
+            'archived_at' => $order->archived_at->format('d.m.Y H:i'),
         ]);
     }
 
     public function destroy($id)
     {
-        $order = Order::onlyTrashed()->findOrFail($id);
-        $order->forceDelete();
+        $order = Order::whereNotNull('archived_at')->findOrFail($id);
+        $order->delete();
 
-        return redirect()->route('admin.orders.archive.index')
+        return redirect()->route('admin.orders.archive')
             ->with('success', 'Sipariş başarıyla silindi.');
     }
 
@@ -83,10 +83,12 @@ class OrderArchiveController extends Controller
 
         try {
             DB::beginTransaction();
-            Order::onlyTrashed()->whereIn('id', $validated['ids'])->forceDelete();
+            Order::whereNotNull('archived_at')
+                ->whereIn('id', $validated['ids'])
+                ->delete();
             DB::commit();
 
-            return redirect()->route('admin.orders.archive.index')
+            return redirect()->route('admin.orders.archive')
                 ->with('success', count($validated['ids']) . ' adet sipariş başarıyla silindi.');
         } catch (\Exception $e) {
             DB::rollBack();

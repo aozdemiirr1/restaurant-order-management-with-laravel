@@ -7,6 +7,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderArchiveController;
+use App\Http\Controllers\Admin\RevenueController;
 
 // Ana sayfa route'u login sayfasına yönlendirir
 Route::redirect('/', '/admin/login');
@@ -29,19 +30,16 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
     Route::resource('customers', CustomerController::class);
 
     // Order routes
-    Route::prefix('orders')->group(function () {
-        // Archive routes - must be defined BEFORE the resource routes
-        Route::prefix('archive')->name('orders.archive.')->group(function () {
-            Route::get('/', [OrderArchiveController::class, 'index'])->name('index');
-            Route::get('/{id}', [OrderArchiveController::class, 'show'])->name('show');
-            Route::delete('/{id}', [OrderArchiveController::class, 'destroy'])->name('destroy');
-            Route::delete('/', [OrderArchiveController::class, 'bulkDelete'])->name('bulk-delete');
-        });
-
-        // Regular order routes
-        Route::delete('/bulk-delete', [OrderController::class, 'bulkDelete'])->name('orders.bulk-delete');
-        Route::put('/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
+    Route::prefix('orders')->name('orders.')->group(function () {
+        Route::get('/archive', [OrderArchiveController::class, 'index'])->name('archive');
+        Route::delete('/archive/bulk-delete', [OrderArchiveController::class, 'bulkDelete'])->name('archive.bulk-delete');
+        Route::delete('/bulk-delete', [OrderController::class, 'bulkDelete'])->name('bulk-delete');
+        Route::get('/archive/{id}', [OrderArchiveController::class, 'show'])->name('archive.show');
+        Route::delete('/archive/{id}', [OrderArchiveController::class, 'destroy'])->name('archive.destroy');
+        Route::put('/{order}/status', [OrderController::class, 'updateStatus'])->name('update-status');
     });
-
     Route::resource('orders', OrderController::class);
+
+    // Revenue routes
+    Route::get('/revenue', [RevenueController::class, 'index'])->name('revenue.index');
 });

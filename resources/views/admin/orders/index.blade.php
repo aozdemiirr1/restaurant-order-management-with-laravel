@@ -22,8 +22,8 @@
 
     confirmBulkDelete() {
         if (this.selectedOrders.length === 0) return;
-        this.deleteModalTitle = 'Siparişleri Sil';
-        this.deleteModalMessage = `${this.selectedOrders.length} adet siparişi silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`;
+        this.deleteModalTitle = 'Siparişleri Arşivle';
+        this.deleteModalMessage = `${this.selectedOrders.length} adet siparişi arşivlemek istediğinize emin misiniz?`;
         this.deleteModalAction = '{{ route('admin.orders.bulk-delete') }}';
         this.showDeleteModal = true;
     },
@@ -39,9 +39,9 @@
     },
 
     confirmDelete(id) {
-        this.deleteModalTitle = 'Siparişi Sil';
-        this.deleteModalMessage = `#${id} numaralı siparişi silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`;
-        this.deleteModalAction = `/admin/orders/${id}`;
+        this.deleteModalTitle = 'Siparişi Arşivle';
+        this.deleteModalMessage = `#${id} numaralı siparişi arşivlemek istediğinize emin misiniz?`;
+        this.deleteModalAction = '{{ route('admin.orders.destroy', '') }}/' + id;
         this.showDeleteModal = true;
     }
 }" class="bg-white rounded-lg shadow-sm">
@@ -524,38 +524,38 @@
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0">
-        <div class="flex items-center justify-center min-h-screen p-0">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
-
-            <div class="relative bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg w-full mx-4">
-                <form :action="deleteModalAction" method="POST" class="bg-white">
-                    @csrf
-                    @method('DELETE')
-                    <template x-if="selectedOrders.length > 0">
-                        <template x-for="id in selectedOrders" :key="id">
-                            <input type="hidden" name="ids[]" :value="id">
-                        </template>
-                    </template>
-                    <div class="p-6">
-                        <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full">
-                            <i class="fas fa-exclamation-triangle text-red-600"></i>
-                        </div>
-                        <div class="mt-3 text-center">
-                            <h3 class="text-lg font-medium text-gray-900 mb-2" x-text="deleteModalTitle"></h3>
-                            <p class="text-sm text-gray-500" x-text="deleteModalMessage"></p>
-                        </div>
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <div class="inline-block align-bottom bg-white rounded-sm text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full">
+                <div class="bg-white">
+                    <div class="p-4 border-b">
+                        <h3 class="text-base font-medium text-gray-700" x-text="deleteModalTitle"></h3>
                     </div>
-                    <div class="bg-gray-50 px-6 py-4 flex justify-end space-x-3">
+                    <div class="p-4">
+                        <p class="text-sm text-gray-500" x-text="deleteModalMessage"></p>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                        <form :action="deleteModalAction" method="POST" class="inline-block">
+                            @csrf
+                            @method('DELETE')
+                            <template x-if="selectedOrders.length > 0">
+                                <template x-for="id in selectedOrders" :key="id">
+                                    <input type="hidden" name="ids[]" :value="id">
+                                </template>
+                            </template>
+                            <button type="submit"
+                                class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                                Evet
+                            </button>
+                        </form>
                         <button type="button" @click="showDeleteModal = false"
-                            class="inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm">
+                            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                             İptal
                         </button>
-                        <button type="submit"
-                            class="inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:text-sm">
-                            Sil
-                        </button>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>

@@ -13,7 +13,7 @@ class OrderController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Order::with(['customer', 'items.menu']);
+        $query = Order::whereNull('archived_at')->with(['customer', 'items.menu']);
 
         // Müşteri filtresi
         if ($request->filled('customer')) {
@@ -145,7 +145,8 @@ class OrderController extends Controller
             'status' => $order->status,
             'total_amount' => (float) $order->total_amount,
             'notes' => $order->notes,
-            'created_at' => $order->created_at->format('d.m.Y H:i'),
+            'created_at' => $order->created_at ? $order->created_at->format('d.m.Y H:i') : null,
+            'archived_at' => $order->archived_at ? $order->archived_at->format('d.m.Y H:i') : null,
             'customer' => [
                 'name' => $order->customer->name,
                 'phone' => $order->customer->phone,
@@ -181,10 +182,15 @@ class OrderController extends Controller
 
     public function destroy(Order $order)
     {
-        $order->delete();
-
-        return redirect()->route('admin.orders.index')
-            ->with('success', 'Sipariş başarıyla silindi.');
+        try {
+            DB::beginTransaction();
+            $order->update(['archived_at' => now()]);
+            DB::commit();
+            return redirect()->back()->with('success', 'Sipariş başarıyla arşivlendi.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Sipariş arşivlenirken bir hata oluştu.');
+        }
     }
 
     public function bulkDelete(Request $request)
@@ -196,14 +202,12 @@ class OrderController extends Controller
 
         try {
             DB::beginTransaction();
-            Order::whereIn('id', $validated['ids'])->delete();
+            Order::whereIn('id', $validated['ids'])->update(['archived_at' => now()]);
             DB::commit();
-
-            return redirect()->route('admin.orders.index')
-                ->with('success', count($validated['ids']) . ' adet sipariş başarıyla silindi.');
+            return redirect()->back()->with('success', count($validated['ids']) . ' sipariş başarıyla arşivlendi.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Siparişler silinirken bir hata oluştu.');
+            return back()->with('error', 'Siparişler arşivlenirken bir hata oluştu.');
         }
     }
 }

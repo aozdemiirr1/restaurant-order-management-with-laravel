@@ -46,24 +46,33 @@
                     <i class="fas fa-home mr-3 text-sm"></i>
                     <span>Dashboard</span>
                 </a>
+
                 <p class="text-xs text-gray-400">Restaurant Menus</p>
                 <a href="{{ route('admin.menus.index') }}" class="flex items-center px-4 py-3 mb-2 {{ request()->routeIs('admin.menus.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
                     <i class="fas fa-utensils mr-3 text-sm"></i>
                     <span>Menüler</span>
                 </a>
+
                 <p class="text-xs text-gray-400">Customers</p>
                 <a href="{{ route('admin.customers.index') }}" class="flex items-center px-4 py-3 mb-2 {{ request()->routeIs('admin.customers.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
                     <i class="fas fa-users mr-3 text-sm"></i>
                     <span>Müşteriler</span>
                 </a>
+
                 <p class="text-xs text-gray-400">Orders</p>
-                <a href="{{ route('admin.orders.index') }}" class="flex items-center px-4 py-3 mb-2 {{ request()->routeIs('admin.orders.*') && !request()->routeIs('admin.orders.archive.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
-                    <i class="fas fa-shopping-bag mr-3 text-sm"></i>
+                <a href="{{ route('admin.orders.index') }}" class="flex items-center px-4 py-3 mb-2 {{ request()->routeIs('admin.orders.*') && !request()->routeIs('admin.orders.archive*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
+                    <i class="fas fa-shopping-cart mr-3 text-sm"></i>
                     <span>Siparişler</span>
                 </a>
-                <a href="{{ route('admin.orders.archive.index') }}" class="flex items-center px-4 py-3 mb-2 {{ request()->routeIs('admin.orders.archive.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
+
+                <a href="{{ route('admin.orders.archive') }}" class="flex items-center px-4 py-3 mb-2 {{ request()->routeIs('admin.orders.archive*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
                     <i class="fas fa-archive mr-3 text-sm"></i>
-                    <span>Sipariş Arşivi</span>
+                    <span>Arşiv</span>
+                </a>
+
+                <a href="{{ route('admin.revenue.index') }}" class="flex items-center px-4 py-3 mb-2 {{ request()->routeIs('admin.revenue.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
+                    <i class="fas fa-chart-line mr-3 text-sm"></i>
+                    <span>Ciro Raporu</span>
                 </a>
             </nav>
         </div>

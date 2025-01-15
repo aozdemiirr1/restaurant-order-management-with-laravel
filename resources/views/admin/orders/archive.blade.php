@@ -29,7 +29,7 @@
 
     async viewOrder(id) {
         try {
-            const response = await fetch(`/admin/orders/archive/${id}`);
+            const response = await fetch('{{ route('admin.orders.archive.show', '') }}/' + id);
             this.orderData = await response.json();
             this.showViewModal = true;
         } catch (error) {
@@ -40,7 +40,7 @@
     confirmDelete(id) {
         this.deleteModalTitle = 'Siparişi Sil';
         this.deleteModalMessage = `#${id} numaralı siparişi kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`;
-        this.deleteModalAction = `/admin/orders/archive/${id}`;
+        this.deleteModalAction = '{{ route('admin.orders.archive.destroy', '') }}/' + id;
         this.showDeleteModal = true;
     }
 }" class="bg-white rounded-lg shadow-sm">
@@ -63,7 +63,7 @@
                     <i class="fas" :class="showFilters ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
                 </button>
                 @if(request()->hasAny(['status', 'customer', 'date_from', 'date_to']))
-                    <a href="{{ route('admin.orders.archive.index') }}"
+                    <a href="{{ route('admin.orders.archive') }}"
                     class="text-white bg-red-400 px-4 py-2 rounded-lg text-sm transition-colors flex items-center gap-1.5">
                         <i class="fas fa-times text-xs"></i>
                         <span>Sıfırla</span>
@@ -76,7 +76,7 @@
     <!-- Filtreleme Alanı -->
     <div x-show="showFilters" x-transition
          class="border-b bg-gray-50/50 p-4">
-        <form action="{{ route('admin.orders.archive.index') }}" method="GET" class="space-y-4">
+        <form action="{{ route('admin.orders.archive') }}" method="GET" class="space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Müşteri Seçimi -->
                 <div>
@@ -199,7 +199,7 @@
                         </span>
                     </td>
                     <td class="px-4 py-3">
-                        <div class="text-sm text-gray-900">{{ $order->deleted_at->format('d.m.Y H:i') }}</div>
+                        <div class="text-sm text-gray-900">{{ $order->archived_at->format('d.m.Y H:i') }}</div>
                     </td>
                     <td class="px-4 py-3 text-right space-x-1">
                         <button @click="viewOrder({{ $order->id }})"
@@ -305,7 +305,7 @@ document.addEventListener('alpine:init', () => {
 
         async viewOrder(id) {
             try {
-                const response = await fetch(`/admin/orders/archive/${id}`);
+                const response = await fetch('{{ route('admin.orders.archive.show', '') }}/' + id);
                 this.orderData = await response.json();
                 this.showViewModal = true;
             } catch (error) {
@@ -316,7 +316,7 @@ document.addEventListener('alpine:init', () => {
         confirmDelete(id) {
             this.deleteModalTitle = 'Siparişi Sil';
             this.deleteModalMessage = `#${id} numaralı siparişi kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`;
-            this.deleteModalAction = `/admin/orders/archive/${id}`;
+            this.deleteModalAction = '{{ route('admin.orders.archive.destroy', '') }}/' + id;
             this.showDeleteModal = true;
         }
     }));

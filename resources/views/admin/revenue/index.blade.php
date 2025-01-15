@@ -25,30 +25,56 @@
     <div class="p-4">
         @if($period === 'daily')
             @if($revenue)
-            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h3 class="text-sm font-medium text-gray-600 mb-2">Toplam Sipariş</h3>
-                    <p class="text-2xl font-bold text-gray-900">{{ $revenue->total_orders }}</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Toplam Sipariş ve Ciro -->
+                <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 stats-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-blue-600">Toplam Sipariş</p>
+                            <h3 class="text-2xl font-bold text-blue-900 mt-2">{{ $revenue->total_orders }}</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-shopping-cart text-xl text-white"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-blue-200">
+                        <p class="text-sm font-medium text-blue-600">Toplam Ciro</p>
+                        <h4 class="text-xl font-bold text-blue-900 mt-1">₺{{ number_format($revenue->total_revenue, 2, '.', ',') }}</h4>
+                    </div>
                 </div>
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h3 class="text-sm font-medium text-gray-600 mb-2">Toplam Ciro</h3>
-                    <p class="text-2xl font-bold text-gray-900">₺{{ number_format($revenue->total_revenue, 2, '.', ',') }}</p>
+
+                <!-- İptal Edilen Siparişler -->
+                <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-6 stats-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-red-600">İptal Edilen</p>
+                            <h3 class="text-2xl font-bold text-red-900 mt-2">{{ $revenue->cancelled_orders }}</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-gradient-to-br from-red-400 to-red-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-times-circle text-xl text-white"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-red-200">
+                        <p class="text-sm font-medium text-red-600">İptal Edilen Tutar</p>
+                        <h4 class="text-xl font-bold text-red-900 mt-1">₺{{ number_format($revenue->cancelled_amount, 2, '.', ',') }}</h4>
+                    </div>
                 </div>
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h3 class="text-sm font-medium text-gray-600 mb-2">İptal Edilen</h3>
-                    <p class="text-2xl font-bold text-red-600">{{ $revenue->cancelled_orders }}</p>
-                </div>
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h3 class="text-sm font-medium text-gray-600 mb-2">İptal Edilen Tutar</h3>
-                    <p class="text-2xl font-bold text-red-600">₺{{ number_format($revenue->cancelled_amount, 2, '.', ',') }}</p>
-                </div>
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h3 class="text-sm font-medium text-gray-600 mb-2">Arşivlenen</h3>
-                    <p class="text-2xl font-bold text-gray-900">{{ $revenue->archived_orders }}</p>
-                </div>
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <h3 class="text-sm font-medium text-gray-600 mb-2">Arşivlenen Ciro</h3>
-                    <p class="text-2xl font-bold text-gray-900">₺{{ number_format($revenue->archived_revenue, 2, '.', ',') }}</p>
+
+                <!-- Arşivlenen Siparişler -->
+                <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 stats-card">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-green-600">Arşivlenen</p>
+                            <h3 class="text-2xl font-bold text-green-900 mt-2">{{ $revenue->archived_orders }}</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-archive text-xl text-white"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-green-200">
+                        <p class="text-sm font-medium text-green-600">Arşivlenen Ciro</p>
+                        <h4 class="text-xl font-bold text-green-900 mt-1">₺{{ number_format($revenue->archived_revenue, 2, '.', ',') }}</h4>
+                    </div>
                 </div>
             </div>
             @else

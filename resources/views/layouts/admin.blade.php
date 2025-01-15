@@ -47,6 +47,11 @@
                     <span>Dashboard</span>
                 </a>
 
+                <a href="{{ route('admin.revenue.index') }}" class="flex items-center px-4 py-3 mb-2 {{ request()->routeIs('admin.revenue.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
+                    <i class="fas fa-chart-line mr-3 text-sm"></i>
+                    <span>Ciro Raporu</span>
+                </a>
+
                 <p class="text-xs text-gray-400">Restaurant Menus</p>
                 <a href="{{ route('admin.menus.index') }}" class="flex items-center px-4 py-3 mb-2 {{ request()->routeIs('admin.menus.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
                     <i class="fas fa-utensils mr-3 text-sm"></i>
@@ -68,11 +73,6 @@
                 <a href="{{ route('admin.orders.archive') }}" class="flex items-center px-4 py-3 mb-2 {{ request()->routeIs('admin.orders.archive*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
                     <i class="fas fa-archive mr-3 text-sm"></i>
                     <span>Arşiv</span>
-                </a>
-
-                <a href="{{ route('admin.revenue.index') }}" class="flex items-center px-4 py-3 mb-2 {{ request()->routeIs('admin.revenue.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
-                    <i class="fas fa-chart-line mr-3 text-sm"></i>
-                    <span>Ciro Raporu</span>
                 </a>
             </nav>
         </div>

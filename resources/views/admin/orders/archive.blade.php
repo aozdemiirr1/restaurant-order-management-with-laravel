@@ -29,7 +29,10 @@
 
     async viewOrder(id) {
         try {
-            const response = await fetch('{{ route('admin.orders.archive.show', '') }}/' + id);
+            const response = await fetch(`/admin/orders/archive/${id}`);
+            if (!response.ok) {
+                throw new Error('Sipariş bilgileri alınamadı');
+            }
             this.orderData = await response.json();
             this.showViewModal = true;
         } catch (error) {
@@ -274,6 +277,123 @@
             </div>
         </div>
     </div>
+
+    <!-- Sipariş Detay Modal -->
+    <div x-show="showViewModal" x-cloak
+         class="fixed inset-0 z-50 overflow-y-auto"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <div class="inline-block align-bottom bg-white rounded-sm text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
+                <div class="bg-white">
+                    <div class="flex justify-between items-center p-4 border-b">
+                        <div>
+                            <h3 class="text-base font-medium text-gray-700" x-text="'Sipariş #' + orderData?.id"></h3>
+                            <p class="text-sm text-gray-500 mt-0.5" x-text="orderData?.created_at"></p>
+                        </div>
+                        <button @click="showViewModal = false" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="p-4">
+                        <template x-if="orderData">
+                            <div class="space-y-6">
+                                <!-- Sipariş Durumu -->
+                                <div class="flex justify-between items-center">
+                                    <span class="px-3 py-1 text-xs font-medium rounded"
+                                        :class="{
+                                            'bg-yellow-50 text-yellow-700': orderData.status === 'preparing',
+                                            'bg-green-50 text-green-700': orderData.status === 'delivered',
+                                            'bg-red-50 text-red-700': orderData.status === 'cancelled'
+                                        }"
+                                        x-text="orderData.status === 'preparing' ? 'Hazırlanıyor' :
+                                               orderData.status === 'delivered' ? 'Teslim Edildi' : 'İptal Edildi'">
+                                    </span>
+                                    <span class="text-sm text-gray-500">
+                                        Arşivlenme: <span x-text="orderData.archived_at"></span>
+                                    </span>
+                                </div>
+
+                                <!-- Müşteri Bilgileri -->
+                                <div class="bg-gray-50 rounded-lg p-4">
+                                    <h4 class="text-sm font-medium text-gray-700 mb-3">Müşteri Bilgileri</h4>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <p class="text-xs text-gray-500">Ad Soyad</p>
+                                            <p class="text-sm text-gray-800" x-text="orderData.customer.name"></p>
+                                        </div>
+                                        <div>
+                                            <p class="text-xs text-gray-500">Telefon</p>
+                                            <p class="text-sm text-gray-800" x-text="orderData.customer.phone"></p>
+                                        </div>
+                                        <div x-show="orderData.customer.email">
+                                            <p class="text-xs text-gray-500">E-posta</p>
+                                            <p class="text-sm text-gray-800" x-text="orderData.customer.email"></p>
+                                        </div>
+                                        <div x-show="orderData.customer.address">
+                                            <p class="text-xs text-gray-500">Adres</p>
+                                            <p class="text-sm text-gray-800" x-text="orderData.customer.address"></p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Sipariş Öğeleri -->
+                                <div class="border rounded-lg overflow-hidden">
+                                    <table class="w-full">
+                                        <thead>
+                                            <tr class="bg-gray-50 border-b">
+                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-600">Ürün</th>
+                                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-600">Adet</th>
+                                                <th class="px-4 py-2 text-right text-xs font-medium text-gray-600">Birim Fiyat</th>
+                                                <th class="px-4 py-2 text-right text-xs font-medium text-gray-600">Toplam</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-100">
+                                            <template x-for="item in orderData.items" :key="item.menu_id">
+                                                <tr>
+                                                    <td class="px-4 py-2.5">
+                                                        <div class="text-sm text-gray-800" x-text="item.menu_name"></div>
+                                                    </td>
+                                                    <td class="px-4 py-2.5 text-center">
+                                                        <div class="text-sm text-gray-800" x-text="item.quantity"></div>
+                                                    </td>
+                                                    <td class="px-4 py-2.5 text-right">
+                                                        <div class="text-sm text-gray-800" x-text="`₺${parseFloat(item.unit_price).toFixed(2)}`"></div>
+                                                    </td>
+                                                    <td class="px-4 py-2.5 text-right">
+                                                        <div class="text-sm text-gray-800" x-text="`₺${parseFloat(item.subtotal).toFixed(2)}`"></div>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                        <tfoot>
+                                            <tr class="bg-gray-50">
+                                                <td colspan="3" class="px-4 py-2.5 text-sm font-medium text-gray-700 text-right">Toplam:</td>
+                                                <td class="px-4 py-2.5 text-sm font-medium text-gray-700 text-right" x-text="`₺${parseFloat(orderData.total_amount).toFixed(2)}`"></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+
+                                <!-- Sipariş Notu -->
+                                <div x-show="orderData.notes" class="bg-gray-50 rounded-lg p-4">
+                                    <h4 class="text-sm font-medium text-gray-700 mb-2">Sipariş Notu</h4>
+                                    <p class="text-sm text-gray-600" x-text="orderData.notes"></p>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @push('scripts')
@@ -305,7 +425,10 @@ document.addEventListener('alpine:init', () => {
 
         async viewOrder(id) {
             try {
-                const response = await fetch('{{ route('admin.orders.archive.show', '') }}/' + id);
+                const response = await fetch(`/admin/orders/archive/${id}`);
+                if (!response.ok) {
+                    throw new Error('Sipariş bilgileri alınamadı');
+                }
                 this.orderData = await response.json();
                 this.showViewModal = true;
             } catch (error) {

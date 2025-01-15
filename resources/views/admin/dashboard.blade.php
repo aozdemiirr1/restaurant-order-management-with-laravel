@@ -41,7 +41,7 @@
             <p class="text-sm text-gray-500">Günlük Satışlar</p>
             @if($daily_cancelled_orders > 0)
             <div class="mt-3 pt-3 border-t border-gray-50">
-                <span class="text-xs px-2 py-1 rounded-full bg-rose-50 text-rose-500">
+                <span class="text-xs px-2 py-1 rounded bg-rose-50 text-rose-500">
                     {{ $daily_cancelled_orders }} iptal edildi
                 </span>
             </div>
@@ -61,7 +61,7 @@
             <p class="text-sm text-gray-500">Aylık Toplam Satış</p>
             @if($monthly_cancelled_orders > 0)
             <div class="mt-3 pt-3 border-t border-gray-50">
-                <span class="text-xs px-2 py-1 rounded-full bg-rose-50 text-rose-500">
+                <span class="text-xs px-2 py-1 rounded bg-rose-50 text-rose-500">
                     {{ $monthly_cancelled_orders }} iptal edildi
                 </span>
             </div>

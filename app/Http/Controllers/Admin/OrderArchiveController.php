@@ -45,24 +45,31 @@ class OrderArchiveController extends Controller
             ->with(['customer', 'items.menu'])
             ->findOrFail($id);
 
-        return response()->json([
+        $orderData = [
             'id' => $order->id,
-            'customer' => $order->customer,
+            'status' => $order->status,
+            'total_amount' => (float) $order->total_amount,
+            'notes' => $order->notes,
+            'created_at' => $order->created_at->format('d.m.Y H:i'),
+            'archived_at' => $order->archived_at->format('d.m.Y H:i'),
+            'customer' => [
+                'name' => $order->customer->name,
+                'phone' => $order->customer->phone,
+                'email' => $order->customer->email,
+                'address' => $order->customer->address,
+            ],
             'items' => $order->items->map(function ($item) {
                 return [
                     'menu_id' => $item->menu_id,
                     'menu_name' => $item->menu->name,
-                    'quantity' => $item->quantity,
+                    'quantity' => (int) $item->quantity,
                     'unit_price' => (float) $item->unit_price,
                     'subtotal' => (float) ($item->quantity * $item->unit_price),
                 ];
             }),
-            'total_amount' => (float) $order->total_amount,
-            'status' => $order->status,
-            'notes' => $order->notes,
-            'created_at' => $order->created_at->format('d.m.Y H:i'),
-            'archived_at' => $order->archived_at->format('d.m.Y H:i'),
-        ]);
+        ];
+
+        return response()->json($orderData);
     }
 
     public function destroy($id)

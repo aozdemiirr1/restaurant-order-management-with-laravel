@@ -408,7 +408,7 @@
                             <div class="space-y-6">
                                 <!-- Sipariş Durumu -->
                                 <div class="flex justify-between items-center">
-                                    <span class="px-3 py-1 text-xs font-medium rounded-full"
+                                    <span class="px-3 py-1 text-xs font-medium rounded"
                                         :class="{
                                             'bg-yellow-50 text-yellow-700': orderData.status === 'preparing',
                                             'bg-green-50 text-green-700': orderData.status === 'delivered',

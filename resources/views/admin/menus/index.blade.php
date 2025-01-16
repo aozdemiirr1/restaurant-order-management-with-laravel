@@ -188,7 +188,9 @@
                         <div class="text-sm font-medium text-gray-900">₺{{ number_format($menu->price, 2) }}</div>
                     </td>
                     <td class="px-4 py-3">
-                        <div class="text-sm text-gray-900">{{ $menu->category->name }}</div>
+                        <span class="px-2 py-1 inline-flex text-xs leading-5 font-medium rounded bg-gray-100 text-gray-800">
+                            {{ $menu->category->name }}
+                        </span>
                     </td>
                     <td class="px-4 py-3">
                         <span class="px-2 py-1 inline-flex text-xs leading-5 font-medium rounded {{ $menu->is_available ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
@@ -435,7 +437,7 @@
                                     İptal
                                 </button>
                                 <button type="submit"
-                                    class="px-4 py-2 text-sm font-medium text-white bg-[#f39c12] rounded-lg hover:bg-[#e67e22] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#f39c12] transition-colors">
+                                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                                     Güncelle
                                 </button>
                             </div>

@@ -31,7 +31,7 @@
                     @forelse($expenses as $expense)
                     <tr class="hover:bg-gray-50/40">
                         <td class="px-4 py-3">
-                            <div class="text-sm text-gray-900">#{{ $expense->id }}</div>
+                            <div class="text-xs text-gray-400">#{{ $expense->id }}</div>
                         </td>
                         <td class="px-4 py-3">
                             <div class="text-sm text-gray-900">{{ $expense->title }}</div>

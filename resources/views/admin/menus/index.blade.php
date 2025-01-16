@@ -172,7 +172,7 @@
                 @forelse($menus as $menu)
                 <tr class="hover:bg-gray-50/40 transition-colors">
                     <td class="px-4 py-3 whitespace-nowrap">
-                        <div class="text-sm font-medium text-gray-900">#{{ $menu->id }}</div>
+                        <div class="text-xs text-gray-400">#{{ $menu->id }}</div>
                     </td>
                     <td class="px-4 py-3 whitespace-nowrap">
                         @if($menu->image)

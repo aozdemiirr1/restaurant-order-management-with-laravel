@@ -19,6 +19,7 @@
             <table class="w-full">
                 <thead>
                     <tr class="bg-gray-50">
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">ID</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Başlık</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Kategori</th>
                         <th class="px-4 py-3 text-center text-xs font-medium text-gray-600">Tutar</th>
@@ -29,6 +30,9 @@
                 <tbody class="divide-y divide-gray-100">
                     @forelse($expenses as $expense)
                     <tr class="hover:bg-gray-50/40">
+                        <td class="px-4 py-3">
+                            <div class="text-sm text-gray-900">#{{ $expense->id }}</div>
+                        </td>
                         <td class="px-4 py-3">
                             <div class="text-sm text-gray-900">{{ $expense->title }}</div>
                             @if($expense->description)

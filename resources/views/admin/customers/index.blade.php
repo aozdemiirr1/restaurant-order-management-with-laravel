@@ -76,6 +76,7 @@
         <table class="w-full">
             <thead>
                 <tr class="bg-gray-50/50">
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">ID</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Müşteri</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">İletişim</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Adres</th>
@@ -85,6 +86,9 @@
             <tbody class="divide-y divide-gray-100">
                 <template x-for="customer in filteredCustomers" :key="customer.id">
                     <tr class="hover:bg-gray-50/40 transition-colors">
+                        <td class="px-4 py-3">
+                            <div class="text-sm font-medium text-gray-900" x-text="'#' + customer.id"></div>
+                        </td>
                         <td class="px-4 py-3">
                             <div class="text-sm font-medium text-gray-900" x-text="customer.name"></div>
                         </td>

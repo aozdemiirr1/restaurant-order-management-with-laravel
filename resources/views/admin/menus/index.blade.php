@@ -159,6 +159,7 @@
         <table class="w-full">
             <thead>
                 <tr class="bg-gray-50/50">
+                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">ID</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Görsel</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Menü Adı</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Fiyat</th>
@@ -170,6 +171,9 @@
             <tbody class="divide-y divide-gray-100">
                 @forelse($menus as $menu)
                 <tr class="hover:bg-gray-50/40 transition-colors">
+                    <td class="px-4 py-3 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">#{{ $menu->id }}</div>
+                    </td>
                     <td class="px-4 py-3 whitespace-nowrap">
                         @if($menu->image)
                             <img src="{{ asset('storage/' . $menu->image) }}" alt="{{ $menu->name }}"

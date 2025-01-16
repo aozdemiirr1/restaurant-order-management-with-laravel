@@ -31,6 +31,11 @@ class CategorySeeder extends Seeder
                 'is_active' => true
             ],
             [
+                'name' => 'Kırmızı Et',
+                'description' => 'Kırmızı et çeşitleri',
+                'is_active' => true
+            ],
+            [
                 'name' => 'Yan Ürünler',
                 'description' => 'Çorbalar, salatalar ve diğer yan ürünler',
                 'is_active' => true

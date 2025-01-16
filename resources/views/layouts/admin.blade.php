@@ -42,7 +42,7 @@
             </div>
             <nav class="mt-5 px-3">
                 <p class="text-xs text-gray-400">Dashboard</p>
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-3 mb-2 {{ request()->routeIs('admin.dashboard') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-3 my-2 {{ request()->routeIs('admin.dashboard') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
                     <i class="fas fa-home mr-3 text-sm"></i>
                     <span>Dashboard</span>
                 </a>
@@ -58,19 +58,19 @@
                 </a>
 
                 <p class="text-xs text-gray-400">Restaurant Menus</p>
-                <a href="{{ route('admin.menus.index') }}" class="flex items-center px-4 py-3 mb-2 {{ request()->routeIs('admin.menus.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
+                <a href="{{ route('admin.menus.index') }}" class="flex items-center px-4 py-3 my-2 {{ request()->routeIs('admin.menus.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
                     <i class="fas fa-utensils mr-3 text-sm"></i>
                     <span>Menüler</span>
                 </a>
 
                 <p class="text-xs text-gray-400">Customers</p>
-                <a href="{{ route('admin.customers.index') }}" class="flex items-center px-4 py-3 mb-2 {{ request()->routeIs('admin.customers.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
+                <a href="{{ route('admin.customers.index') }}" class="flex items-center px-4 py-3 my-2 {{ request()->routeIs('admin.customers.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
                     <i class="fas fa-users mr-3 text-sm"></i>
                     <span>Müşteriler</span>
                 </a>
 
                 <p class="text-xs text-gray-400">Orders</p>
-                <a href="{{ route('admin.orders.index') }}" class="flex items-center px-4 py-3 mb-2 {{ request()->routeIs('admin.orders.*') && !request()->routeIs('admin.orders.archive*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
+                <a href="{{ route('admin.orders.index') }}" class="flex items-center px-4 py-3 my-2 {{ request()->routeIs('admin.orders.*') && !request()->routeIs('admin.orders.archive*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
                     <i class="fas fa-shopping-cart mr-3 text-sm"></i>
                     <span>Siparişler</span>
                 </a>

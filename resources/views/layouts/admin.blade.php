@@ -38,7 +38,7 @@
         <!-- Sidebar -->
         <div class="w-60 bg-red-900 text-white">
             <div class="p-5 border-b border-white-700/30">
-                <h2 class="text-xl font-semibold text-gray-100">Restaurant</h2>
+                <h2 class="text-sm font-semibold text-gray-100">Restaurant Management</h2>
             </div>
             <nav class="mt-5 px-3">
                 <p class="text-xs text-gray-400">Dashboard</p>

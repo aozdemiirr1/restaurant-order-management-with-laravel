@@ -106,7 +106,7 @@
     <!-- Popüler Ürünler -->
     <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
         <h3 class="text-base font-semibold text-gray-800 mb-6">Günün Popüler Ürünleri</h3>
-        <div class="space-y-6">
+        <div class="h-[calc(100vh-40rem)] overflow-y-auto pr-2 space-y-6">
             @foreach($daily_popular_items as $category => $items)
             <div>
                 <h4 class="text-sm font-medium text-gray-600 mb-3">{{ $category }}</h4>

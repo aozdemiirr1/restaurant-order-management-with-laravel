@@ -158,7 +158,6 @@
                             <span class="ml-2 text-xs font-medium text-gray-500">Tümünü Seç</span>
                         </label>
                     </th>
-                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Sipariş No</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Müşteri</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Tutar</th>
                     <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">Durum</th>
@@ -183,9 +182,6 @@
                             </div>
                             <span class="ml-2 text-xs font-medium text-gray-400">#{{ $order->id }}</span>
                         </label>
-                    </td>
-                    <td class="px-4 py-3">
-                        <div class="text-sm font-medium text-gray-900">#{{ $order->id }}</div>
                     </td>
                     <td class="px-4 py-3">
                         <div class="text-sm font-medium text-gray-900">{{ $order->customer->name }}</div>

@@ -46,4 +46,9 @@ Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(functi
 
     // Expense routes
     Route::resource('expenses', ExpenseController::class);
+
+    // Settings routes
+    Route::get('/settings', function() {
+        return view('admin.settings.index');
+    })->name('settings.index');
 });

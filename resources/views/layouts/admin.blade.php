@@ -36,49 +36,90 @@
 <body>
     <div class="min-h-screen flex bg-gray-50">
         <!-- Sidebar -->
-        <div class="w-60 bg-red-900 text-white">
+        <div class="w-64 bg-red-900 text-white">
             <div class="p-5 border-b border-white-700/30">
-                <h2 class="text-sm font-semibold text-gray-100">Restaurant Management</h2>
+                <h2 class="text-md font-semibold text-gray-100">Restaurant Management</h2>
             </div>
-            <nav class="mt-5 px-3">
-                <p class="text-xs text-gray-400">Dashboard</p>
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-3 my-2 {{ request()->routeIs('admin.dashboard') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
-                    <i class="fas fa-home mr-3 text-sm"></i>
-                    <span>Dashboard</span>
-                </a>
+            <nav class="mt-5 px-3" x-data="{ adminOpen: true }">
+                <!-- Admin Section -->
+                <div class="mb-4">
+                    <button @click="adminOpen = !adminOpen"
+                        class="w-full flex items-center justify-between px-4 py-3 text-white hover:bg-white/5 rounded-lg transition-colors">
+                        <div class="flex items-center">
+                            <i class="fas fa-user-shield mr-3 text-sm"></i>
+                            <span class="text-sm font-medium">Admin Panel</span>
+                        </div>
+                        <i class="fas" :class="adminOpen ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+                    </button>
 
-                <a href="{{ route('admin.revenue.index') }}" class="flex items-center px-4 py-3 mb-2 {{ request()->routeIs('admin.revenue.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
-                    <i class="fas fa-chart-line mr-3 text-sm"></i>
-                    <span>Ciro Raporu</span>
-                </a>
+                    <div x-show="adminOpen" x-collapse>
+                        <!-- Dashboard -->
+                        <a href="{{ route('admin.dashboard') }}"
+                            class="flex items-center px-4 py-2 mt-2 {{ request()->routeIs('admin.dashboard') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
+                            <i class="fas fa-home mr-3 text-sm"></i>
+                            <span>Dashboard</span>
+                        </a>
 
-                <a href="{{ route('admin.expenses.index') }}" class="flex items-center px-4 py-3 mb-2 {{ request()->routeIs('admin.expenses.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
-                    <i class="fas fa-money-bill-wave mr-3 text-sm"></i>
-                    <span>Giderler</span>
-                </a>
+                        <!-- Revenue -->
+                        <a href="{{ route('admin.revenue.index') }}"
+                            class="flex items-center px-4 py-2 mt-2 {{ request()->routeIs('admin.revenue.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
+                            <i class="fas fa-chart-line mr-3 text-sm"></i>
+                            <span>Ciro Raporu</span>
+                        </a>
 
-                <p class="text-xs text-gray-400">Restaurant Menus</p>
-                <a href="{{ route('admin.menus.index') }}" class="flex items-center px-4 py-3 my-2 {{ request()->routeIs('admin.menus.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
-                    <i class="fas fa-utensils mr-3 text-sm"></i>
-                    <span>Menüler</span>
-                </a>
+                        <!-- Expenses -->
+                        <a href="{{ route('admin.expenses.index') }}"
+                            class="flex items-center px-4 py-2 mt-2 {{ request()->routeIs('admin.expenses.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
+                            <i class="fas fa-money-bill-wave mr-3 text-sm"></i>
+                            <span>Giderler</span>
+                        </a>
 
-                <p class="text-xs text-gray-400">Customers</p>
-                <a href="{{ route('admin.customers.index') }}" class="flex items-center px-4 py-3 my-2 {{ request()->routeIs('admin.customers.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
-                    <i class="fas fa-users mr-3 text-sm"></i>
-                    <span>Müşteriler</span>
-                </a>
+                        <!-- Menus Section -->
+                        <div class="mt-4">
+                            <p class="px-4 text-xs font-semibold text-gray-400 uppercase">Menü Yönetimi</p>
+                            <a href="{{ route('admin.menus.index') }}"
+                                class="flex items-center px-4 py-2 mt-2 {{ request()->routeIs('admin.menus.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
+                                <i class="fas fa-utensils mr-3 text-sm"></i>
+                                <span>Menüler</span>
+                            </a>
+                        </div>
 
-                <p class="text-xs text-gray-400">Orders</p>
-                <a href="{{ route('admin.orders.index') }}" class="flex items-center px-4 py-3 my-2 {{ request()->routeIs('admin.orders.*') && !request()->routeIs('admin.orders.archive*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
-                    <i class="fas fa-shopping-cart mr-3 text-sm"></i>
-                    <span>Siparişler</span>
-                </a>
+                        <!-- Customers Section -->
+                        <div class="mt-4">
+                            <p class="px-4 text-xs font-semibold text-gray-400 uppercase">Müşteriler</p>
+                            <a href="{{ route('admin.customers.index') }}"
+                                class="flex items-center px-4 py-2 mt-2 {{ request()->routeIs('admin.customers.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
+                                <i class="fas fa-users mr-3 text-sm"></i>
+                                <span>Müşteriler</span>
+                            </a>
+                        </div>
 
-                <a href="{{ route('admin.orders.archive') }}" class="flex items-center px-4 py-3 mb-2 {{ request()->routeIs('admin.orders.archive*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
-                    <i class="fas fa-archive mr-3 text-sm"></i>
-                    <span>Arşiv</span>
-                </a>
+                        <!-- Orders Section -->
+                        <div class="mt-4">
+                            <p class="px-4 text-xs font-semibold text-gray-400 uppercase">Siparişler</p>
+                            <a href="{{ route('admin.orders.index') }}"
+                                class="flex items-center px-4 py-2 mt-2 {{ request()->routeIs('admin.orders.*') && !request()->routeIs('admin.orders.archive*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
+                                <i class="fas fa-shopping-cart mr-3 text-sm"></i>
+                                <span>Siparişler</span>
+                            </a>
+                            <a href="{{ route('admin.orders.archive') }}"
+                                class="flex items-center px-4 py-2 mt-2 {{ request()->routeIs('admin.orders.archive*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
+                                <i class="fas fa-archive mr-3 text-sm"></i>
+                                <span>Arşiv</span>
+                            </a>
+                        </div>
+
+                        <!-- Settings Section -->
+                        <div class="mt-4">
+                            <p class="px-4 text-xs font-semibold text-gray-400 uppercase">Ayarlar</p>
+                            <a href="{{ route('admin.settings.index') }}"
+                                class="flex items-center px-4 py-2 mt-2 {{ request()->routeIs('admin.settings.*') ? 'bg-white/10' : 'hover:bg-white/5' }} rounded-lg text-white text-sm">
+                                <i class="fas fa-cog mr-3 text-sm"></i>
+                                <span>Sistem Ayarları</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </nav>
         </div>
 

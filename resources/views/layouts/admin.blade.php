@@ -130,12 +130,21 @@
                 <div class="flex justify-between items-center px-6 py-4">
                     <h1 class="text-lg font-medium text-gray-800">@yield('title', 'Dashboard')</h1>
                     <div class="flex items-center space-x-4">
-                        <span class="text-sm text-gray-600">Admin</span>
+                        <span class="text-sm text-red-500">{{ Auth::guard('admin')->user()->name }}</span>
                         <form method="POST" action="{{ route('admin.logout') }}">
                             @csrf
-                            <button type="submit" class="text-gray-500 hover:text-gray-700 transition-colors">
-                                <i class="fas fa-sign-out-alt"></i>
-                            </button>
+                            <div x-data="{ open: false }" class="relative">
+                                <button type="button" @click="open = !open" class="text-red-500 hover:text-red-700 transition-colors">
+                                    <i class="fas fa-user"></i>
+                                </button>
+                                <div x-show="open"
+                                     @click.away="open = false"
+                                     class="absolute right-0 top-full mt-1 bg-red-500 text-white text-xs py-2 px-4 rounded shadow-lg">
+                                    <button type="submit" class="whitespace-nowrap hover:text-gray-300 transition-colors">
+                                        Çıkış Yap
+                                    </button>
+                                </div>
+                            </div>
                         </form>
                     </div>
                 </div>
